@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient History | Aarogya Medical</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #f0f2f5 100%); color: #1a1a2e; min-height: 100vh; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c5cdd8; border-radius: 10px; }
+        .glass-strong { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.6); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeInUp 0.5s ease-out forwards; }
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.15s; opacity: 0; }
+        .delay-3 { animation-delay: 0.2s; opacity: 0; }
+        .timeline-dot { position: relative; }
+        .timeline-dot::before { content: ''; position: absolute; left: -29px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; border-radius: 50%; border: 3px solid #667eea; background: white; z-index: 2; }
+        .timeline-line { position: relative; }
+        .timeline-line::before { content: ''; position: absolute; left: -24px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #667eea, #764ba2, #e2e8f0); }
+    </style>
+</head>
+<body class="pb-24 selection:bg-[#667eea] selection:text-white">
+
+    <!-- NAVBAR -->
+    <nav class="glass-strong fixed w-full z-50 shadow-sm">
+        <div class="max-w-[90rem] mx-auto flex justify-between items-center px-6 py-3.5">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-3 group">
+                <div class="w-11 h-11 bg-gradient-to-br from-[#667eea] to-[#764ba2] rounded-2xl flex items-center justify-center shadow-lg shadow-[#667eea]/25 group-hover:shadow-[#667eea]/40 transition-all duration-300 group-hover:scale-105">
+                    <i data-lucide="heart-pulse" class="text-white w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold text-gray-800 tracking-tight">Aarogya</span>
+                    <span class="text-xl font-light text-[#667eea] tracking-tight"> Medical</span>
+                </div>
+            </a>
+            <div class="flex items-center gap-3">
+                <a href="{% url 'patient_search' %}" class="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#667eea] transition-colors px-4 py-2 rounded-xl hover:bg-[#667eea]/5">
+                    <i data-lucide="search" class="w-4 h-4"></i> Search
+                </a>
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#667eea] transition-colors px-4 py-2 rounded-xl hover:bg-[#667eea]/5">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-6 pt-28">
+        
+        <!-- Patient Profile Header -->
+        <div class="bg-white rounded-[1.6rem] p-8 shadow-sm border border-gray-100/80 mb-8 animate-in">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white font-bold text-3xl shadow-xl shadow-[#667eea]/25 flex-shrink-0">
+                    {{ patient.name|make_list|first|upper }}
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-2xl font-extrabold text-gray-800 mb-1">{{ patient.name }}</h1>
+                    <div class="flex flex-wrap items-center gap-4 mt-2">
+                        <span class="flex items-center gap-1.5 text-sm font-medium text-gray-400">
+                            <i data-lucide="phone" class="w-4 h-4"></i> {{ patient.phone_number }}
+                        </span>
+                        {% if patient.date_of_birth %}
+                        <span class="flex items-center gap-1.5 text-sm font-medium text-gray-400">
+                            <i data-lucide="cake" class="w-4 h-4"></i> {{ patient.date_of_birth|date:"d M, Y" }}
+                        </span>
+                        {% endif %}
+                        <span class="flex items-center gap-1.5 text-sm font-medium text-gray-400">
+                            <i data-lucide="calendar" class="w-4 h-4"></i> Patient since {{ patient.created_at|date:"M Y" }}
+                        </span>
+                        {% if patient.location %}
+                        <span class="flex items-center gap-1.5 text-sm font-medium text-gray-400">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i> {{ patient.location }}
+                        </span>
+                        {% endif %}
+                        {% if patient.email %}
+                        <span class="flex items-center gap-1.5 text-sm font-medium text-gray-400">
+                            <i data-lucide="mail" class="w-4 h-4"></i> {{ patient.email }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-center px-5 py-3 bg-gradient-to-br from-[#667eea]/5 to-[#764ba2]/5 rounded-2xl border border-[#667eea]/10">
+                        <p class="text-2xl font-extrabold text-[#667eea]">{{ total_visits }}</p>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Total Visits</p>
+                    </div>
+                    <div class="text-center px-5 py-3 bg-gradient-to-br from-emerald-50 to-white rounded-2xl border border-emerald-200/50">
+                        <p class="text-2xl font-extrabold text-emerald-600">₹{{ total_spent }}</p>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Total Spent</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointment History Timeline -->
+        <div class="mb-5 animate-in delay-1">
+            <div class="flex items-center gap-3">
+                <h2 class="text-[11px] font-extrabold tracking-[0.2em] text-[#764ba2] uppercase">Appointment History</h2>
+                <div class="h-px flex-1 bg-gradient-to-r from-[#764ba2]/20 to-transparent"></div>
+            </div>
+        </div>
+
+        {% if appointments %}
+        <div class="pl-8 timeline-line animate-in delay-2">
+            {% for appt in appointments %}
+            <div class="mb-6 timeline-dot">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100/80 hover:shadow-md transition-all duration-300">
+                    <!-- Top Row: Date, Time, Status -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                        <div class="flex items-center gap-3">
+                            <div class="inline-flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5 text-gray-400"></i>
+                                <span class="text-sm font-bold text-gray-700">{{ appt.date|date:"d M, Y" }}</span>
+                            </div>
+                            <div class="inline-flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                                <i data-lucide="clock" class="w-3.5 h-3.5 text-gray-400"></i>
+                                <span class="text-sm font-bold text-gray-700">{{ appt.time_slot }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            {% if appt.is_new_patient %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-[#764ba2] border border-violet-200/50 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#764ba2]"></span> New
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-50 text-gray-500 border border-gray-200/60 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span> Return
+                                </span>
+                            {% endif %}
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border
+                                {% if appt.status == 'Pending' %}bg-amber-50 text-amber-600 border-amber-200/60
+                                {% elif appt.status == 'Completed' %}bg-emerald-50 text-emerald-600 border-emerald-200/60
+                                {% else %}bg-rose-50 text-rose-600 border-rose-200/60{% endif %}">
+                                {{ appt.status }}
+                            </span>
+                            <div class="flex flex-col items-end">
+                                <span class="text-xs font-bold text-gray-400">Fee: ₹{{ appt.fee_charged }}</span>
+                                {% if appt.medicine_price %}
+                                <span class="text-xs font-bold text-[#667eea]">Med: ₹{{ appt.medicine_price }}</span>
+                                {% endif %}
+                                <span class="text-lg font-extrabold text-gray-800">Total: ₹{{ appt.fee_charged|add:appt.medicine_price|default:appt.fee_charged }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-100/80">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <i data-lucide="ruler" class="w-3 h-3"></i> Height
+                            </p>
+                            <p class="text-sm font-bold text-gray-700">{% if appt.height_cm %}{{ appt.height_cm }} cm{% else %}—{% endif %}</p>
+                        </div>
+                        <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-100/80">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <i data-lucide="weight" class="w-3 h-3"></i> Weight
+                            </p>
+                            <p class="text-sm font-bold text-gray-700">{% if appt.weight_kg %}{{ appt.weight_kg }} kg{% else %}—{% endif %}</p>
+                        </div>
+                        <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-100/80 col-span-2">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <i data-lucide="stethoscope" class="w-3 h-3"></i> Symptoms
+                            </p>
+                            <p class="text-sm font-medium text-gray-600 leading-relaxed">{% if appt.symptoms %}{{ appt.symptoms }}{% else %}—{% endif %}</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-[#667eea]/[0.04] to-[#764ba2]/[0.04] rounded-xl p-3 border border-[#667eea]/10 col-span-2 md:col-span-4">
+                            <p class="text-[10px] font-bold text-[#667eea] uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <i data-lucide="pill" class="w-3 h-3"></i> Medicine Given
+                            </p>
+                            <p class="text-sm font-medium text-gray-600 leading-relaxed">{% if appt.medicine_given %}{{ appt.medicine_given }}{% else %}—{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 animate-in delay-2">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-5 border border-gray-100">
+                <i data-lucide="calendar-x" class="w-10 h-10 text-gray-200"></i>
+            </div>
+            <p class="font-bold text-lg text-gray-400 mb-1">No appointment history</p>
+            <p class="text-sm text-gray-300">This patient has no recorded appointments yet</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

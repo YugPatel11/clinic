@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Aarogya Medical</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #f0f2f5 100%); min-height: 100vh; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .input-modern { transition: all 0.3s ease; border: 2px solid #e2e8f0; }
+        .input-modern:focus { border-color: #667eea; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1); outline: none; }
+        .btn-shine { position: relative; overflow: hidden; }
+        .btn-shine::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent); transform: rotate(30deg); transition: all 0.6s; }
+        .btn-shine:hover::after { left: 100%; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeInUp 0.7s ease-out forwards; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        .float-anim { animation: float 4s ease-in-out infinite; }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center p-6 selection:bg-[#667eea] selection:text-white">
+
+    <!-- Subtle background shapes -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-20 w-72 h-72 bg-[#667eea]/5 rounded-full blur-3xl float-anim"></div>
+        <div class="absolute bottom-20 right-20 w-96 h-96 bg-[#764ba2]/5 rounded-full blur-3xl float-anim" style="animation-delay: 2s;"></div>
+    </div>
+
+    <div class="max-w-md w-full animate-in relative z-10">
+        <div class="bg-white/90 backdrop-blur-xl p-10 rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] border border-white/60">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-br from-[#667eea] to-[#764ba2] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl shadow-[#667eea]/25">
+                    <i data-lucide="heart-pulse" class="text-white w-8 h-8"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-1">
+                    <span>Aarogya</span> <span class="font-light text-[#667eea]">Medical</span>
+                </h1>
+                <p class="text-gray-400 mt-2 text-sm font-medium">Please sign in to access the portal</p>
+            </div>
+
+            {% if form.errors %}
+            <div class="bg-red-50/80 border border-red-200/60 text-red-600 p-3 rounded-xl mb-5 text-sm font-medium flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+                Invalid username or password. Please try again.
+            </div>
+            {% endif %}
+
+            <form method="POST" class="space-y-5">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1.5">Username</label>
+                    <input type="text" name="username" required class="w-full px-4 py-3 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="Enter your username">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1.5">Password</label>
+                    <input type="password" name="password" required class="w-full px-4 py-3 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="Enter your password">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white py-3.5 rounded-xl hover:shadow-xl hover:shadow-[#667eea]/25 transition-all mt-2 font-bold text-sm btn-shine hover:-translate-y-0.5">
+                    Sign In
+                </button>
+            </form>
+        </div>
+        <p class="text-center text-xs text-gray-400 mt-6 font-medium">© 2026 Aarogya Medical. All rights reserved.</p>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

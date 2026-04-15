@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Patients | Aarogya Medical</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #f0f2f5 100%); color: #1a1a2e; min-height: 100vh; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c5cdd8; border-radius: 10px; }
+        .glass-strong { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.6); }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1); }
+        .input-modern { transition: all 0.3s ease; border: 2px solid #e2e8f0; }
+        .input-modern:focus { border-color: #667eea; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1); outline: none; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeInUp 0.5s ease-out forwards; }
+        .delay-1 { animation-delay: 0.05s; opacity: 0; }
+        .delay-2 { animation-delay: 0.1s; opacity: 0; }
+        .delay-3 { animation-delay: 0.15s; opacity: 0; }
+    </style>
+</head>
+<body class="pb-24 selection:bg-[#667eea] selection:text-white">
+
+    <!-- NAVBAR -->
+    <nav class="glass-strong fixed w-full z-50 shadow-sm">
+        <div class="max-w-[90rem] mx-auto flex justify-between items-center px-6 py-3.5">
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-3 group">
+                <div class="w-11 h-11 bg-gradient-to-br from-[#667eea] to-[#764ba2] rounded-2xl flex items-center justify-center shadow-lg shadow-[#667eea]/25 group-hover:shadow-[#667eea]/40 transition-all duration-300 group-hover:scale-105">
+                    <i data-lucide="heart-pulse" class="text-white w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold text-gray-800 tracking-tight">Aarogya</span>
+                    <span class="text-xl font-light text-[#667eea] tracking-tight"> Medical</span>
+                </div>
+            </a>
+            <a href="{% url 'dashboard' %}" class="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#667eea] transition-colors px-4 py-2 rounded-xl hover:bg-[#667eea]/5">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-6 pt-28">
+        
+        <!-- Search Header -->
+        <div class="text-center mb-10 animate-in">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#667eea]/10 to-[#764ba2]/10 rounded-3xl flex items-center justify-center mx-auto mb-5 border border-[#667eea]/10">
+                <i data-lucide="search" class="text-[#667eea] w-7 h-7"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Search Patients</h1>
+            <p class="text-sm text-gray-400 font-medium">Find patients by name or phone number and view their complete history</p>
+        </div>
+        
+        <!-- Search Form -->
+        <div class="mb-10 animate-in delay-1">
+            <form method="GET" class="relative max-w-2xl mx-auto">
+                <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-5 h-5 text-gray-300"></i>
+                </div>
+                <input type="text" name="q" value="{{ query }}" placeholder="Type patient name or phone number..." 
+                    class="w-full pl-14 pr-36 py-4 rounded-2xl input-modern bg-white text-base font-medium placeholder-gray-300 shadow-sm" autofocus>
+                <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-[#667eea]/25 transition-all">
+                    Search
+                </button>
+            </form>
+        </div>
+        
+        <!-- Results -->
+        {% if query %}
+            {% if patients %}
+                <div class="mb-5 animate-in delay-2">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-[0.15em]">
+                        Found {{ patients|length }} patient{{ patients|length|pluralize }}
+                    </p>
+                </div>
+                
+                <div class="space-y-4">
+                    {% for patient in patients %}
+                    <a href="{% url 'patient_history' patient.id %}" class="block bg-white rounded-2xl p-5 shadow-sm border border-gray-100/80 card-hover animate-in delay-{{ forloop.counter }}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white font-bold text-lg shadow-md shadow-[#667eea]/20">
+                                    {{ patient.name|make_list|first|upper }}
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-gray-800">{{ patient.name }}</h3>
+                                    <div class="flex items-center gap-3 mt-1">
+                                        <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
+                                            <i data-lucide="phone" class="w-3 h-3"></i> {{ patient.phone_number }}
+                                        </span>
+                                        {% if patient.date_of_birth %}
+                                        <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
+                                            <i data-lucide="cake" class="w-3 h-3"></i> {{ patient.date_of_birth|date:"d M, Y" }}
+                                        </span>
+                                        {% endif %}
+                                        {% if patient.location %}
+                                        <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
+                                            <i data-lucide="map-pin" class="w-3 h-3"></i> {{ patient.location }}
+                                        </span>
+                                        {% endif %}
+                                        {% if patient.email %}
+                                        <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
+                                            <i data-lucide="mail" class="w-3 h-3"></i> {{ patient.email }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right hidden sm:block">
+                                    <p class="text-2xl font-extrabold text-gray-700">{{ patient.appointment_count }}</p>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Visit{{ patient.appointment_count|pluralize }}</p>
+                                </div>
+                                <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:text-[#667eea] transition-colors border border-gray-100">
+                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-16 animate-in delay-2">
+                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-5 border border-gray-100">
+                        <i data-lucide="user-x" class="w-10 h-10 text-gray-200"></i>
+                    </div>
+                    <p class="font-bold text-lg text-gray-400 mb-1">No patients found</p>
+                    <p class="text-sm text-gray-300">Try a different name or phone number</p>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-16 animate-in delay-2">
+                <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-5 border border-gray-100">
+                    <i data-lucide="users" class="w-10 h-10 text-gray-200"></i>
+                </div>
+                <p class="font-bold text-lg text-gray-400 mb-1">Start typing to search</p>
+                <p class="text-sm text-gray-300">Enter a patient name or phone number above</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>
