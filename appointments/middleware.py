@@ -15,10 +15,14 @@ class SubscriptionMiddleware:
             return self.get_response(request)
             
         # 3. For everyone else (Owner & Receptionist), check if the bill is paid
-        subscription = Subscription.objects.first()
-        if subscription and not subscription.is_active:
-            # If not active, block them and show the suspended page
-            return render(request, 'appointments/suspended.html')
+        try:
+            subscription = Subscription.objects.first()
+            if subscription and not subscription.is_active:
+                # If not active, block them and show the suspended page
+                return render(request, 'appointments/suspended.html')
+        except Exception:
+            # Table might not exist yet during initial deployment
+            pass
 
         # If active, let them through
         return self.get_response(request)
