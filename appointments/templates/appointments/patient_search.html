@@ -87,7 +87,7 @@
         
         <div class="space-y-3">
             {% for patient in patients %}
-            <a href="{% url 'patient_history' patient.id %}" class="block bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100/80 card-hover animate-in" style="animation-delay: {{ forloop.counter0|add:5|mul:0.05 }}s;">
+            <a href="{% url 'patient_history' patient.id %}" class="block bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100/80 card-hover animate-in">
                 <div class="flex items-center justify-between gap-3">
                     <div class="flex items-center gap-3 sm:gap-4 overflow-hidden">
                         <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-md shadow-[#667eea]/20 flex-shrink-0">
