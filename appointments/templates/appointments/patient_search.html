@@ -75,77 +75,62 @@
         </div>
         
         <!-- Results -->
-        {% if query %}
-            {% if patients %}
-                <div class="mb-5 animate-in delay-2">
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-[0.15em]">
-                        Found {{ patients|length }} patient{{ patients|length|pluralize }}
-                    </p>
-                </div>
-                
-                <div class="space-y-4">
-                    {% for patient in patients %}
-                    <a href="{% url 'patient_history' patient.id %}" class="block bg-white rounded-2xl p-5 shadow-sm border border-gray-100/80 card-hover animate-in delay-{{ forloop.counter }}">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white font-bold text-lg shadow-md shadow-[#667eea]/20">
-                                    {{ patient.name|make_list|first|upper }}
-                                </div>
-                                <div>
-                                    <h3 class="text-base font-bold text-gray-800">{{ patient.name }}</h3>
-                                    <div class="flex items-center gap-3 mt-1">
-                                        <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
-                                            <i data-lucide="phone" class="w-3 h-3"></i> {{ patient.phone_number }}
-                                        </span>
-                                        {% if patient.date_of_birth %}
-                                        <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
-                                            <i data-lucide="cake" class="w-3 h-3"></i> {{ patient.date_of_birth|date:"d M, Y" }}
-                                        </span>
-                                        {% endif %}
-                                        {% if patient.location %}
-                                        <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
-                                            <i data-lucide="map-pin" class="w-3 h-3"></i> {{ patient.location }}
-                                        </span>
-                                        {% endif %}
-                                        {% if patient.email %}
-                                        <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
-                                            <i data-lucide="mail" class="w-3 h-3"></i> {{ patient.email }}
-                                        </span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="text-right hidden sm:block">
-                                    <p class="text-2xl font-extrabold text-gray-700">{{ patient.appointment_count }}</p>
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Visit{{ patient.appointment_count|pluralize }}</p>
-                                </div>
-                                <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:text-[#667eea] transition-colors border border-gray-100">
-                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                                </div>
+        <div class="mb-5 animate-in delay-2 flex items-center justify-between">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-[0.15em]">
+                {% if query %}
+                    Search results ({{ patients|length }})
+                {% else %}
+                    All Patients ({{ patients|length }})
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="space-y-3">
+            {% for patient in patients %}
+            <a href="{% url 'patient_history' patient.id %}" class="block bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100/80 card-hover animate-in" style="animation-delay: {{ forloop.counter0|add:5|mul:0.05 }}s;">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 sm:gap-4 overflow-hidden">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-md shadow-[#667eea]/20 flex-shrink-0">
+                            {{ patient.name|make_list|first|upper }}
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 class="text-sm sm:text-base font-bold text-gray-800 truncate">{{ patient.name }}</h3>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
+                                <span class="text-[10px] sm:text-xs font-medium text-gray-400 flex items-center gap-1">
+                                    <i data-lucide="phone" class="w-3 h-3"></i> {{ patient.phone_number }}
+                                </span>
+                                {% if patient.location %}
+                                <span class="text-[10px] sm:text-xs font-medium text-gray-400 flex items-center gap-1 hidden sm:flex">
+                                    <i data-lucide="map-pin" class="w-3 h-3"></i> {{ patient.location }}
+                                </span>
+                                {% endif %}
+                                <span class="text-[10px] sm:text-xs font-medium text-[#667eea] flex items-center gap-1">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i> {{ patient.appointment_count }} Visit{{ patient.appointment_count|pluralize }}
+                                </span>
                             </div>
                         </div>
-                    </a>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="text-center py-16 animate-in delay-2">
-                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-5 border border-gray-100">
-                        <i data-lucide="user-x" class="w-10 h-10 text-gray-200"></i>
                     </div>
-                    <p class="font-bold text-lg text-gray-400 mb-1">No patients found</p>
-                    <p class="text-sm text-gray-300">Try a different name or phone number</p>
+                    <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-lg font-extrabold text-gray-700 leading-none">{{ patient.appointment_count }}</p>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1">Visit{{ patient.appointment_count|pluralize }}</p>
+                        </div>
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:text-[#667eea] transition-colors border border-gray-100">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
                 </div>
-            {% endif %}
-        {% else %}
+            </a>
+            {% empty %}
             <div class="text-center py-16 animate-in delay-2">
                 <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-5 border border-gray-100">
-                    <i data-lucide="users" class="w-10 h-10 text-gray-200"></i>
+                    <i data-lucide="user-x" class="w-10 h-10 text-gray-200"></i>
                 </div>
-                <p class="font-bold text-lg text-gray-400 mb-1">Start typing to search</p>
-                <p class="text-sm text-gray-300">Enter a patient name or phone number above</p>
+                <p class="font-bold text-lg text-gray-400 mb-1">No patients found</p>
+                <p class="text-sm text-gray-300">Try a different name or phone number</p>
             </div>
-        {% endif %}
+            {% endfor %}
+        </div>
     </div>
 
     <script>lucide.createIcons();</script>

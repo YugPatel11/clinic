@@ -311,6 +311,10 @@ def patient_search(request):
         ).annotate(
             appointment_count=Count('appointments')
         ).order_by('-created_at')
+    else:
+        patients = Patient.objects.annotate(
+            appointment_count=Count('appointments')
+        ).order_by('-created_at')
     
     context = {
         'query': query,

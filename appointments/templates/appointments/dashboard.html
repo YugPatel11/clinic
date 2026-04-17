@@ -34,7 +34,7 @@
         
         /* Animated gradient border */
         .gradient-border { position: relative; }
-        .gradient-border::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s; }
+        .gradient-border::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s; }
         .gradient-border:hover::before { opacity: 1; }
         
         /* Expandable row */
@@ -580,34 +580,35 @@
         });
 
         // CHARTS
-        {% if is_owner %}
-        const chartLabels = JSON.parse('{{ chart_labels_json|safe }}');
-        const patientCtx = document.getElementById('patientChart').getContext('2d');
-        new Chart(patientCtx, {
-            type: 'bar',
-            data: {
-                labels: chartLabels,
-                datasets: [
-                    { label: 'New', data: JSON.parse('{{ chart_new_patients_json|safe }}'), backgroundColor: '#667eea', borderRadius: 4 },
-                    { label: 'Return', data: JSON.parse('{{ chart_old_patients_json|safe }}'), backgroundColor: '#a78bfa', borderRadius: 4 }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { x:{grid:{display:false}}, y:{beginAtZero:true} } }
-        });
+        const isOwner = ("{{ is_owner|lower }}" === "true");
+        if (isOwner) {
+            const chartLabels = JSON.parse('{{ chart_labels_json|safe }}');
+            const patientCtx = document.getElementById('patientChart').getContext('2d');
+            new Chart(patientCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        { label: 'New', data: JSON.parse('{{ chart_new_patients_json|safe }}'), backgroundColor: '#667eea', borderRadius: 4 },
+                        { label: 'Return', data: JSON.parse('{{ chart_old_patients_json|safe }}'), backgroundColor: '#a78bfa', borderRadius: 4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x:{grid:{display:false}}, y:{beginAtZero:true} } }
+            });
 
-        const revCtx = document.getElementById('revenueChart').getContext('2d');
-        new Chart(revCtx, {
-            type: 'line',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    label: 'Revenue', data: JSON.parse('{{ chart_revenue_json|safe }}'),
-                    borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, scales: { x:{grid:{display:false}}, y:{beginAtZero:true} } }
-        });
-        {% endif %}
+            const revCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revCtx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Revenue', data: JSON.parse('{{ chart_revenue_json|safe }}'),
+                        borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x:{grid:{display:false}}, y:{beginAtZero:true} } }
+            });
+        }
     </script>
 </body>
 </html>
