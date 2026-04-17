@@ -340,7 +340,7 @@
                             </thead>
                             <tbody class="divide-y divide-gray-50">
                                 {% for appt in appointments %}
-                                <tr class="hover:bg-[#667eea]/[0.02] cursor-pointer" onclick="toggleExpand({{ appt.id }})">
+                                <tr class="hover:bg-gray-50/50 cursor-pointer" onclick="toggleExpand('{{ appt.id }}')">
                                     <td class="px-4 sm:px-6 py-3 sm:py-4">
                                         <div class="flex items-center gap-2 sm:gap-3">
                                             <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#667eea]/10 text-[#667eea] flex items-center justify-center font-bold text-xs sm:text-sm">{{ appt.patient.name|make_list|first|upper }}</div>
