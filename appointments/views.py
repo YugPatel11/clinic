@@ -294,6 +294,7 @@ def dashboard(request):
         'admin_revenue': admin_revenue,
         'admin_revenue_new': admin_revenue_new,
         'admin_revenue_old': admin_revenue_old,
+        'recent_histories': Appointment.objects.filter(status='Completed').select_related('patient').order_by('-date', '-id')[:5],
     }
     
     return render(request, 'appointments/dashboard.html', context)
