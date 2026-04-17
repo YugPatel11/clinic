@@ -103,8 +103,8 @@
                     <i data-lucide="heart-pulse" class="text-white w-5 h-5"></i>
                 </div>
                 <div>
-                    <span class="text-xl font-bold text-gray-800 tracking-tight">Aarogya</span>
-                    <span class="text-xl font-light text-[#667eea] tracking-tight"> Medical</span>
+                    <span class="text-lg font-bold text-gray-800 tracking-tight">Aarogya</span>
+                    <span class="text-lg font-light text-[#667eea] tracking-tight"> Medical</span>
                 </div>
             </a>
             
@@ -152,7 +152,7 @@
 
         <!-- STAT CARDS -->
         <h2 class="text-[11px] font-extrabold tracking-[0.2em] text-gray-400 uppercase mb-5 animate-in">Today's Pulse</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-10">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
             <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-gray-100/80 card-hover gradient-border animate-in delay-1">
                 <div class="w-9 h-9 sm:w-11 sm:h-11 bg-blue-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-blue-500 mb-3 sm:mb-4"><i data-lucide="calendar-check" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
                 <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-0.5">{{ total_today }}</h3>
@@ -227,8 +227,8 @@
         <div class="flex flex-col xl:grid xl:grid-cols-12 gap-8 animate-in delay-1">
             
             <!-- BOOKING FORM -->
-            <div class="order-first xl:order-none xl:col-span-4">
-                <div class="bg-white p-7 rounded-[1.4rem] shadow-sm border border-gray-100/80 sticky top-24">
+            <div class="xl:col-span-4">
+                <div class="bg-white p-5 sm:p-7 rounded-[1.4rem] shadow-sm border border-gray-100/80 sticky top-24">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-11 h-11 bg-[#667eea]/10 rounded-2xl flex items-center justify-center text-[#667eea]"><i data-lucide="calendar-plus" class="w-5 h-5"></i></div>
                         <div>
@@ -294,7 +294,7 @@
             </div>
 
             <!-- APPOINTMENT SCHEDULE -->
-            <div class="order-last xl:order-none xl:col-span-8 flex flex-col h-full">
+            <div class="xl:col-span-8 flex flex-col h-full">
                 <div class="bg-white rounded-[1.4rem] shadow-sm border border-gray-100/80 overflow-hidden flex flex-col h-full">
                     <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50/50 to-white">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
@@ -330,37 +330,37 @@
                     <div class="overflow-x-auto flex-1">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="text-gray-400 text-[10px] uppercase tracking-[0.15em] bg-gray-50/30 border-b">
-                                    <th class="px-6 py-4 font-bold">Patient</th>
-                                    <th class="px-4 py-4 font-bold">Time</th>
-                                    <th class="px-4 py-4 font-bold hidden md:table-cell">Symptoms</th>
-                                    <th class="px-4 py-4 font-bold text-right">Fee</th>
-                                    <th class="px-6 py-4 font-bold text-center">Status</th>
+                                <tr class="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-[0.15em] bg-gray-50/30 border-b">
+                                    <th class="px-4 sm:px-6 py-3 sm:py-4 font-bold">Patient</th>
+                                    <th class="px-3 sm:px-4 py-3 sm:py-4 font-bold">Time</th>
+                                    <th class="px-3 sm:px-4 py-3 sm:py-4 font-bold hidden md:table-cell">Symptoms</th>
+                                    <th class="px-3 sm:px-4 py-3 sm:py-4 font-bold text-right">Fee</th>
+                                    <th class="px-4 sm:px-6 py-3 sm:py-4 font-bold text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50">
                                 {% for appt in appointments %}
                                 <tr class="hover:bg-[#667eea]/[0.02] cursor-pointer" onclick="toggleExpand({{ appt.id }})">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-xl bg-[#667eea]/10 text-[#667eea] flex items-center justify-center font-bold text-sm">{{ appt.patient.name|make_list|first|upper }}</div>
+                                    <td class="px-4 sm:px-6 py-3 sm:py-4">
+                                        <div class="flex items-center gap-2 sm:gap-3">
+                                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#667eea]/10 text-[#667eea] flex items-center justify-center font-bold text-xs sm:text-sm">{{ appt.patient.name|make_list|first|upper }}</div>
                                             <div>
-                                                <a href="{% url 'patient_history' appt.patient.id %}" class="font-bold text-gray-800 text-sm hover:text-[#667eea]" onclick="event.stopPropagation()">{{ appt.patient.name }}</a>
-                                                <p class="text-[10px] text-gray-400 mt-0.5">{{ appt.patient.phone_number }}</p>
+                                                <a href="{% url 'patient_history' appt.patient.id %}" class="font-bold text-gray-800 text-xs sm:text-sm hover:text-[#667eea]" onclick="event.stopPropagation()">{{ appt.patient.name }}</a>
+                                                <p class="text-[9px] sm:text-[10px] text-gray-400 mt-0.5">{{ appt.patient.phone_number }}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-4">
-                                        <span class="text-xs font-bold text-gray-700 bg-gray-50 px-2 py-1 rounded">{{ appt.time_slot }}</span>
-                                        <p class="text-[10px] text-gray-400 mt-1">{{ appt.date|date:"d M" }}</p>
+                                    <td class="px-3 sm:px-4 py-3 sm:py-4">
+                                        <span class="text-[10px] sm:text-xs font-bold text-gray-700 bg-gray-50 px-2 py-1 rounded">{{ appt.time_slot }}</span>
+                                        <p class="text-[9px] sm:text-[10px] text-gray-400 mt-1">{{ appt.date|date:"d M" }}</p>
                                     </td>
-                                    <td class="px-4 py-4 hidden md:table-cell">
-                                        <span class="text-xs text-gray-600 line-clamp-1 max-w-[150px]">{{ appt.symptoms|default:"-" }}</span>
+                                    <td class="px-3 sm:px-4 py-3 sm:py-4 hidden md:table-cell">
+                                        <span class="text-[10px] sm:text-xs text-gray-600 line-clamp-1 max-w-[150px]">{{ appt.symptoms|default:"-" }}</span>
                                     </td>
-                                    <td class="px-4 py-4 text-right font-extrabold text-gray-800">₹{{ appt.fee_charged }}</td>
-                                    <td class="px-6 py-4 text-center" onclick="event.stopPropagation()">
+                                    <td class="px-3 sm:px-4 py-3 sm:py-4 text-right font-extrabold text-gray-800 text-xs sm:text-sm">₹{{ appt.fee_charged }}</td>
+                                    <td class="px-4 sm:px-6 py-3 sm:py-4 text-center" onclick="event.stopPropagation()">
                                         <!-- Doctor selects status, triggers modal setup if Completed -->
-                                        <select onchange="handleStatusChange(this, '{{ appt.id }}')" class="text-[10px] font-bold uppercase px-3 py-1.5 rounded-lg border focus:outline-none transition-all cursor-pointer
+                                        <select onchange="handleStatusChange(this, '{{ appt.id }}')" class="text-[9px] sm:text-[10px] font-bold uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg border focus:outline-none transition-all cursor-pointer
                                             {% if appt.status == 'Pending' %}bg-amber-50 text-amber-600 border-amber-200/60
                                             {% elif appt.status == 'Completed' %}bg-emerald-50 text-emerald-600 border-emerald-200/60
                                             {% else %}bg-rose-50 text-rose-600 border-rose-200/60{% endif %}">
@@ -424,9 +424,9 @@
                 <a href="{% url 'patient_search' %}" class="text-xs font-bold text-white bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-all hidden sm:block">All Patients</a>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
                 {% for history in recent_histories %}
-                <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4 hover:border-indigo-200 transition-colors shadow-sm relative group card-hover">
+                <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3 sm:p-4 hover:border-indigo-200 transition-colors shadow-sm relative group card-hover">
                     <a href="{% url 'patient_history' history.patient.id %}" class="absolute inset-0 z-10"></a>
                     <div class="flex justify-between items-start mb-3">
                         <div>
