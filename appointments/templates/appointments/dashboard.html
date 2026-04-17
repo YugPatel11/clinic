@@ -224,10 +224,10 @@
         {% endif %}
 
         <!-- MAIN CONTENT (FORM + SCHEDULE) -->
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 animate-in delay-1">
+        <div class="flex flex-col xl:grid xl:grid-cols-12 gap-8 animate-in delay-1">
             
             <!-- BOOKING FORM -->
-            <div class="xl:col-span-4">
+            <div class="order-2 xl:order-1 xl:col-span-4">
                 <div class="bg-white p-7 rounded-[1.4rem] shadow-sm border border-gray-100/80 sticky top-24">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-11 h-11 bg-[#667eea]/10 rounded-2xl flex items-center justify-center text-[#667eea]"><i data-lucide="calendar-plus" class="w-5 h-5"></i></div>
@@ -294,7 +294,7 @@
             </div>
 
             <!-- APPOINTMENT SCHEDULE -->
-            <div class="xl:col-span-8">
+            <div class="order-1 xl:order-2 xl:col-span-8">
                 <div class="bg-white rounded-[1.4rem] shadow-sm border border-gray-100/80 overflow-hidden flex flex-col h-full">
                     <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50/50 to-white">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
@@ -333,7 +333,7 @@
                                 <tr class="text-gray-400 text-[10px] uppercase tracking-[0.15em] bg-gray-50/30 border-b">
                                     <th class="px-6 py-4 font-bold">Patient</th>
                                     <th class="px-4 py-4 font-bold">Time</th>
-                                    <th class="px-4 py-4 font-bold">Symptoms</th>
+                                    <th class="px-4 py-4 font-bold hidden md:table-cell">Symptoms</th>
                                     <th class="px-4 py-4 font-bold text-right">Fee</th>
                                     <th class="px-6 py-4 font-bold text-center">Status</th>
                                 </tr>
@@ -354,7 +354,7 @@
                                         <span class="text-xs font-bold text-gray-700 bg-gray-50 px-2 py-1 rounded">{{ appt.time_slot }}</span>
                                         <p class="text-[10px] text-gray-400 mt-1">{{ appt.date|date:"d M" }}</p>
                                     </td>
-                                    <td class="px-4 py-4">
+                                    <td class="px-4 py-4 hidden md:table-cell">
                                         <span class="text-xs text-gray-600 line-clamp-1 max-w-[150px]">{{ appt.symptoms|default:"-" }}</span>
                                     </td>
                                     <td class="px-4 py-4 text-right font-extrabold text-gray-800">₹{{ appt.fee_charged }}</td>
@@ -380,13 +380,20 @@
                                 </tr>
                                  <tr id="expand-{{ appt.id }}" style="display:none;">
                                      <td colspan="5" class="p-0">
-                                         <div class="bg-gray-50 border-l-4 border-[#667eea] p-4 text-sm">
-                                             <p><b>Height:</b> {{ appt.height_cm|default:"-" }} cm | <b>Weight:</b> {{ appt.weight_kg|default:"-" }} kg</p>
-                                             <p class="mt-2 text-gray-500 text-xs"><b>Email:</b> {{ appt.patient.email|default:"-" }} | <b>Location:</b> {{ appt.patient.location|default:"-" }}</p>
-                                             <p class="mt-2"><b>Symptoms:</b> {{ appt.symptoms|default:"-" }}</p>
-                                             <p class="mt-2 text-[#667eea] font-bold"><b>Medicine Given:</b> {{ appt.medicine_given|default:"-" }} 
-                                                 {% if appt.medicine_price %}(Price: ₹{{ appt.medicine_price }}){% endif %}
-                                             </p>
+                                         <div class="bg-gray-50 border-l-4 border-[#667eea] p-4 text-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                             <div>
+                                                 <p><b>Height:</b> {{ appt.height_cm|default:"-" }} cm | <b>Weight:</b> {{ appt.weight_kg|default:"-" }} kg</p>
+                                                 <p class="mt-2 text-gray-500 text-xs"><b>Email:</b> {{ appt.patient.email|default:"-" }} | <b>Location:</b> {{ appt.patient.location|default:"-" }}</p>
+                                                 <p class="mt-2"><b>Symptoms:</b> {{ appt.symptoms|default:"-" }}</p>
+                                                 <p class="mt-2 text-[#667eea] font-bold"><b>Medicine Given:</b> {{ appt.medicine_given|default:"-" }} 
+                                                     {% if appt.medicine_price %}(Price: ₹{{ appt.medicine_price }}){% endif %}
+                                                 </p>
+                                             </div>
+                                             <div>
+                                                 <a href="{% url 'patient_history' appt.patient.id %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white px-4 py-2 rounded-xl text-xs font-bold hover:shadow-lg hover:shadow-[#667eea]/25 transition-all">
+                                                     <i data-lucide="history" class="w-4 h-4"></i> View Full History
+                                                 </a>
+                                             </div>
                                          </div>
                                      </td>
                                  </tr>
