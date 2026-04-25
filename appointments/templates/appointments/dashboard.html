@@ -862,30 +862,154 @@
         const isOwner = ("{{ is_owner|lower }}" === "true");
         if (isOwner) {
             const chartLabels = JSON.parse('{{ chart_labels_json|safe }}');
+            
+            // Patient Chart styling
             const patientCtx = document.getElementById('patientChart').getContext('2d');
             new Chart(patientCtx, {
                 type: 'bar',
                 data: {
                     labels: chartLabels,
                     datasets: [
-                        { label: 'New', data: JSON.parse('{{ chart_new_patients_json|safe }}'), backgroundColor: '#3E96F4', borderRadius: 4 },
-                        { label: 'Return', data: JSON.parse('{{ chart_old_patients_json|safe }}'), backgroundColor: '#a78bfa', borderRadius: 4 }
+                        { label: 'New', data: JSON.parse('{{ chart_new_patients_json|safe }}'), backgroundColor: '#3E96F4', borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.7 },
+                        { label: 'Return', data: JSON.parse('{{ chart_old_patients_json|safe }}'), backgroundColor: '#31393C', borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.7 }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x:{grid:{display:false}}, y:{beginAtZero:true} } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            align: 'end',
+                            labels: { usePointStyle: true, boxWidth: 8, font: { family: 'Inter', size: 11, weight: '600' }, color: '#31393C', padding: 15 }
+                        },
+                        tooltip: {
+                            backgroundColor: '#31393C',
+                            padding: 12,
+                            bodyFont: { family: 'Inter', size: 13 },
+                            titleFont: { family: 'Inter', size: 12, weight: 'normal' },
+                            cornerRadius: 8,
+                            displayColors: true,
+                            usePointStyle: true
+                        }
+                    },
+                    scales: { 
+                        x: { 
+                            stacked: true,
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 10, weight: '600' }, color: '#CCC7BF' },
+                            border: { display: false }
+                        }, 
+                        y: { 
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: { color: '#EDEEEB', drawBorder: false },
+                            ticks: { font: { family: 'Inter', size: 10, weight: '600' }, color: '#CCC7BF', stepSize: 1, padding: 8 },
+                            border: { display: false }
+                        } 
+                    } 
+                }
             });
 
+            // Revenue Chart styling
             const revCtx = document.getElementById('revenueChart').getContext('2d');
+            const revGradient = revCtx.createLinearGradient(0, 0, 0, 220);
+            revGradient.addColorStop(0, 'rgba(16, 185, 129, 0.25)'); // Light emerald gradient
+            revGradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+            // Plugin for vertical line on hover
+            const verticalLinePlugin = {
+                id: 'verticalLine',
+                afterDraw: chart => {
+                    if (chart.tooltip?._active?.length) {
+                        let x = chart.tooltip._active[0].element.x;
+                        let yAxis = chart.scales.y;
+                        let ctx = chart.ctx;
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(x, yAxis.top);
+                        ctx.lineTo(x, yAxis.bottom);
+                        ctx.lineWidth = 1.5;
+                        ctx.strokeStyle = '#31393C';
+                        ctx.setLineDash([4, 4]); // Optional: dash the line
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            };
+
             new Chart(revCtx, {
                 type: 'line',
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'Revenue', data: JSON.parse('{{ chart_revenue_json|safe }}'),
-                        borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.4
+                        label: 'Revenue', 
+                        data: JSON.parse('{{ chart_revenue_json|safe }}'),
+                        borderColor: '#10B981', 
+                        backgroundColor: revGradient, 
+                        fill: true, 
+                        tension: 0.4,
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#FFFFFF',
+                        pointBorderColor: '#10B981',
+                        pointBorderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        pointHitRadius: 20
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x:{grid:{display:false}}, y:{beginAtZero:true} } }
+                plugins: [verticalLinePlugin],
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#FFFFFF',
+                            titleColor: '#CCC7BF',
+                            bodyColor: '#31393C',
+                            borderColor: 'rgba(0,0,0,0.08)',
+                            borderWidth: 1,
+                            titleFont: { family: 'Inter', size: 11, weight: '600' },
+                            bodyFont: { family: 'Inter', size: 20, weight: 'bold' },
+                            padding: { top: 12, right: 16, bottom: 12, left: 16 },
+                            cornerRadius: 8,
+                            displayColors: false,
+                            boxPadding: 4,
+                            intersect: false,
+                            callbacks: {
+                                title: function() { return 'Revenue'; },
+                                label: function(context) { return '₹' + context.parsed.y.toLocaleString(); },
+                                afterLabel: function(context) { return context.label; } // display date
+                            }
+                        }
+                    },
+                    scales: { 
+                        x: { 
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 10, weight: '600' }, color: '#CCC7BF', maxTicksLimit: 10 },
+                            border: { display: false }
+                        }, 
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: '#EDEEEB', borderDash: [4, 4], drawBorder: false },
+                            ticks: { 
+                                font: { family: 'Inter', size: 10, weight: '600' }, 
+                                color: '#CCC7BF',
+                                padding: 12,
+                                callback: function(value) { 
+                                    if(value >= 1000) return (value/1000) + 'k';
+                                    return value;
+                                }
+                            },
+                            border: { display: false }
+                        } 
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                }
             });
         }
     </script>
