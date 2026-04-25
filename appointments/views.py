@@ -7,7 +7,12 @@ from django.utils import timezone
 from django.http import JsonResponse
 from datetime import timedelta, datetime
 from .models import Patient, Appointment, FeeSettings
+from django.http import HttpResponse
 
+def ping(request):
+    return HttpResponse("OK")
+
+    
 @login_required(login_url='login') 
 def dashboard(request):
     today = timezone.now().date()
@@ -35,8 +40,9 @@ def dashboard(request):
             
             appt_date = datetime.strptime(appt_date_str, '%Y-%m-%d').date()
 
-            if Appointment.objects.filter(date=appt_date, time_slot=time_slot).exclude(status='Cancelled').exists():
-                messages.error(request, f'Error: {time_slot} on {appt_date.strftime("%d %b")} is already booked!')
+            existing_count = Appointment.objects.filter(date=appt_date, time_slot=time_slot).exclude(status='Cancelled').count()
+            if existing_count >= 2:
+                messages.error(request, f'Error: {time_slot} on {appt_date.strftime("%d %b")} is fully booked!')
                 return redirect('dashboard')
 
             patient = Patient.objects.filter(phone_number=phone, name__iexact=name).first()
@@ -72,7 +78,12 @@ def dashboard(request):
                 symptoms=symptoms,
                 medicine_given='',  # Will be filled by doctor later
             )
-            messages.success(request, f'Success: Appointment booked for {name}!')
+            
+            if existing_count == 1:
+                messages.warning(request, f'Warning: {time_slot} on {appt_date.strftime("%d %b")} was already booked. Added as 2nd appointment.')
+            else:
+                messages.success(request, f'Success: Appointment booked for {name}!')
+                
             return redirect('dashboard')
         
         elif action == 'update_status':
@@ -95,6 +106,29 @@ def dashboard(request):
                 appt.weight_kg = float(weight)
             appt.save()
             messages.success(request, f'Appointment marked as {new_status}.')
+            return redirect('dashboard')
+            
+        elif action == 'edit_appointment':
+            appt_id = request.POST.get('appointment_id')
+            new_date_str = request.POST.get('new_date')
+            new_time = request.POST.get('new_time')
+            
+            appt = get_object_or_404(Appointment, id=appt_id)
+            new_date = datetime.strptime(new_date_str, '%Y-%m-%d').date()
+            
+            existing_count = Appointment.objects.filter(date=new_date, time_slot=new_time).exclude(id=appt.id).exclude(status='Cancelled').count()
+            if existing_count >= 2:
+                messages.error(request, f'Error: {new_time} on {new_date.strftime("%d %b")} is fully booked!')
+            else:
+                appt.date = new_date
+                appt.time_slot = new_time
+                appt.save()
+                
+                if existing_count == 1:
+                    messages.warning(request, f'Warning: Appointment moved to {new_time} on {new_date.strftime("%d %b")} (Double-booked).')
+                else:
+                    messages.success(request, f'Success: Appointment moved to {new_time} on {new_date.strftime("%d %b")}.')
+                
             return redirect('dashboard')
 
     # ==========================================
@@ -201,8 +235,8 @@ def dashboard(request):
         appointments_list = Appointment.objects.all().order_by('-date', 'time_slot')
         schedule_title = "Lifetime Schedule"
     else:
-        appointments_list = Appointment.objects.filter(date=display_date).order_by('time_slot')
-        schedule_title = f"Schedule for {display_date.strftime('%d %b, %Y')}"
+        appointments_list = Appointment.objects.all().order_by('-date', 'time_slot')
+        schedule_title = "All Appointments"
     
     # Apply patient name search filter
     if patient_search_query:
@@ -262,6 +296,48 @@ def dashboard(request):
         )
         admin_revenue = (admin_revenue_total_data['fee'] or 0) + (admin_revenue_total_data['med'] or 0)
 
+    # Prepare Calendar Events
+    all_appointments = Appointment.objects.all()
+    if patient_search_query:
+        all_appointments = all_appointments.filter(
+            Q(patient__name__icontains=patient_search_query) | 
+            Q(patient__phone_number__icontains=patient_search_query)
+        )
+        
+    calendar_events = []
+    for appt in all_appointments:
+        try:
+            appt_datetime = datetime.strptime(f"{appt.date} {appt.time_slot}", "%Y-%m-%d %I:%M %p")
+            end_datetime = appt_datetime + timedelta(minutes=30)
+        except Exception:
+            appt_datetime = datetime.combine(appt.date, datetime.min.time())
+            end_datetime = appt_datetime + timedelta(minutes=30)
+            
+        color = '#f59e0b' # Amber for Pending
+        if appt.status == 'Completed':
+            color = '#10b981' # Emerald
+        elif appt.status == 'Cancelled':
+            color = '#f43f5e' # Rose
+            
+        calendar_events.append({
+            'id': str(appt.id),
+            'title': f"{appt.patient.name}",
+            'start': appt_datetime.isoformat(),
+            'end': end_datetime.isoformat(),
+            'backgroundColor': color,
+            'borderColor': color,
+            'extendedProps': {
+                'patientId': appt.patient.id,
+                'patientName': appt.patient.name,
+                'phone': appt.patient.phone_number,
+                'symptoms': appt.symptoms,
+                'fee': str(appt.fee_charged),
+                'status': appt.status,
+                'timeSlot': appt.time_slot,
+                'date': str(appt.date)
+            }
+        })
+
     context = {
         'total_today': total_today,
         'new_patients': new_patients,
@@ -275,6 +351,7 @@ def dashboard(request):
         'schedule_title': schedule_title,
         'booked_slots_json': booked_slots_json,
         'patient_search_query': patient_search_query,
+        'calendar_events_json': json.dumps(calendar_events),
         
         # Chart data
         'chart_labels_json': json.dumps(chart_labels),

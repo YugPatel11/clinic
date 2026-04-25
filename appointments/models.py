@@ -59,8 +59,8 @@ class Appointment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        # This prevents double booking at the database level for the same day and time
-        unique_together = ('date', 'time_slot')
+        pass
+        # unique_together = ('date', 'time_slot') # Removed to allow 2 appointments per slot
 
     def __str__(self):
         return f"{self.patient.name} - {self.date} at {self.time_slot}"

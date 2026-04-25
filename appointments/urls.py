@@ -15,6 +15,8 @@ urlpatterns = [
         template_name='appointments/login.html', 
         redirect_authenticated_user=True
     ), name='login'),
+
+    path('ping/', views.ping),
     
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]

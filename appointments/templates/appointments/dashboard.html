@@ -6,6 +6,23 @@
     <title>Dashboard | Aarogya Medical</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pure-white': '#FFFFFF',
+                        'silver-light': '#EDEEEB',
+                        'heather-gray': '#CCC7BF',
+                        'dark-night': '#31393C',
+                        'electric-blue': '#3E96F4'
+                    }
+                }
+            }
+        }
+    </script>
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,115 +33,216 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #f0f2f5 100%); color: #1a1a2e; min-height: 100vh; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F4F5F2;
+            background-image: radial-gradient(ellipse at 0% 0%, rgba(62,150,244,0.04) 0%, transparent 50%), radial-gradient(ellipse at 100% 100%, rgba(62,150,244,0.03) 0%, transparent 50%);
+            color: #31393C;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
         .font-playfair { font-family: 'Playfair Display', serif; }
-        
+
         /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #c5cdd8; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
-        
-        /* Glass morphism */
-        .glass-strong { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.6); }
-        
+        ::-webkit-scrollbar-thumb { background: #CCC7BF; border-radius: 100px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+
+        /* Glass nav */
+        .glass-strong {
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(24px) saturate(1.8);
+            -webkit-backdrop-filter: blur(24px) saturate(1.8);
+            border-bottom: 1px solid rgba(204,199,191,0.3);
+        }
+
         /* Card styles */
-        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.12); }
-        
-        /* Animated gradient border */
+        .card-hover {
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(49,57,60,0.10), 0 0 0 1px rgba(62,150,244,0.08);
+        }
+
+        /* Gradient border */
         .gradient-border { position: relative; }
-        .gradient-border::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s; }
+        .gradient-border::before {
+            content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
+            background: linear-gradient(135deg, #3E96F4, #6CB5F7);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: 0; transition: opacity 0.35s ease;
+        }
         .gradient-border:hover::before { opacity: 1; }
-        
+
         /* Expandable row */
         .expand-row { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; opacity: 0; }
         .expand-row.open { max-height: 400px; opacity: 1; }
-        
-        /* Smooth input focus */
-        .input-modern { transition: all 0.3s ease; border: 2px solid #e2e8f0; }
-        .input-modern:focus { border-color: #667eea; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1); outline: none; }
-        
+
+        /* Inputs */
+        .input-modern {
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            border: 1.5px solid #E0DDD9;
+            background: #FAFAF8;
+        }
+        .input-modern:hover { border-color: #CCC7BF; }
+        .input-modern:focus {
+            border-color: #3E96F4;
+            box-shadow: 0 0 0 3px rgba(62,150,244,0.12);
+            outline: none;
+            background: #fff;
+        }
+
         /* Chart container */
         .chart-container { position: relative; height: 220px; }
-        
-        /* Status badge animation */
+
+        /* Status badge pulse */
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
-        
-        /* Smooth page load */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-in { animation: fadeInUp 0.6s ease-out forwards; }
-        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+
+        /* Page entrance */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .delay-1 { animation-delay: 0.08s; opacity: 0; }
 
         /* Modal Styles */
-        #medicineModal { display: none; }
-        #medicineModal.active { display: flex; }
+        #medicineModal, #editModal, #eventDetailsModal, #warningModal { display: none; }
+        #medicineModal.active, #editModal.active, #eventDetailsModal.active, #warningModal.active { display: flex; }
 
-        /* Flatpickr Custom Styling */
+        /* Modal entrance */
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        #medicineModal.active > div,
+        #editModal.active > div,
+        #eventDetailsModal.active > div,
+        #warningModal.active > div {
+            animation: modalIn 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
+        }
+
+        /* FullCalendar Customization */
+        .fc { font-family: 'Inter', sans-serif; font-size: 0.8rem; }
+        .fc-toolbar-title { font-size: 1.15rem !important; font-weight: 700 !important; color: #31393C; letter-spacing: -0.01em; }
+        .fc-button-primary {
+            background-color: #3E96F4 !important; border-color: #3E96F4 !important;
+            border-radius: 8px !important; font-weight: 600 !important;
+            box-shadow: 0 1px 2px rgba(62,150,244,0.15) !important;
+            transition: all 0.2s ease !important;
+        }
+        .fc-button-primary:hover {
+            background-color: #2b82dc !important; border-color: #2b82dc !important;
+            box-shadow: 0 4px 12px rgba(62,150,244,0.25) !important;
+            transform: translateY(-1px);
+        }
+        .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: #1a6fc2 !important; border-color: #1a6fc2 !important;
+        }
+        .fc-event {
+            cursor: pointer; border-radius: 6px !important; padding: 2px 6px;
+            border: none !important; font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .fc-event:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); transform: translateY(-1px); }
+        .fc-event-title { font-weight: 600; font-size: 0.72rem; }
+        .fc-col-header-cell { font-weight: 700 !important; color: #31393C !important; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .fc-timegrid-slot { height: 3em !important; }
+        .fc-timegrid-slot-label { font-size: 0.65rem; font-weight: 600; color: #CCC7BF; }
+        .fc .fc-daygrid-day-number { font-weight: 600; color: #31393C; }
+        .fc .fc-day-today { background: rgba(62,150,244,0.04) !important; }
+        .fc-scrollgrid { border-color: #EDEEEB !important; }
+        .fc td, .fc th { border-color: #EDEEEB !important; }
+
+        /* Flatpickr */
         .flatpickr-calendar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(102, 126, 234, 0.2) !important;
-            border-radius: 1.25rem !important;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+            background: #fff;
+            backdrop-filter: blur(12px);
+            border: 1px solid #E0DDD9 !important;
+            border-radius: 16px !important;
+            box-shadow: 0 16px 48px -12px rgba(49,57,60,0.12), 0 0 0 1px rgba(0,0,0,0.03) !important;
             font-family: 'Inter', sans-serif !important;
         }
         .flatpickr-day.selected {
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            background: #3E96F4 !important;
             border-color: transparent !important;
-            border-radius: 12px !important;
+            border-radius: 10px !important;
+            box-shadow: 0 2px 8px rgba(62,150,244,0.3);
         }
         .flatpickr-day:hover {
-            background: #f0f4ff !important;
-            border-radius: 12px !important;
+            background: rgba(62,150,244,0.08) !important;
+            border-radius: 10px !important;
         }
         .flatpickr-months .flatpickr-month {
             background: transparent !important;
-            color: #1a1a2e !important;
-            height: 45px !important;
+            color: #31393C !important;
+            height: 44px !important;
         }
         .flatpickr-current-month .flatpickr-monthDropdown-months {
             font-weight: 700 !important;
         }
         .flatpickr-weekday {
-            color: #718096 !important;
-            font-weight: 600 !important;
+            color: #CCC7BF !important;
+            font-weight: 700 !important;
+            font-size: 0.7rem !important;
         }
+
+        /* Button primary shared */
+        .btn-primary {
+            background: #3E96F4;
+            color: #fff;
+            font-weight: 700;
+            transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            background: #2b82dc;
+            box-shadow: 0 8px 24px -4px rgba(62,150,244,0.3);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active { transform: translateY(0); }
     </style>
 </head>
-<body class="pb-24 selection:bg-[#667eea] selection:text-white">
+<body class="pb-24 selection:bg-electric-blue selection:text-white">
 
     <!-- ===================== NAVBAR ===================== -->
-    <nav class="glass-strong fixed w-full z-50 shadow-sm">
+    <nav class="glass-strong fixed w-full z-50">
         <div class="max-w-[90rem] mx-auto flex justify-between items-center px-6 py-3.5">
             <a href="{% url 'dashboard' %}" class="flex items-center gap-3 group">
-                <div class="w-11 h-11 bg-gradient-to-br from-[#667eea] to-[#764ba2] rounded-2xl flex items-center justify-center shadow-lg shadow-[#667eea]/25 group-hover:scale-105 transition-all">
+                <div class="w-11 h-11 bg-gradient-to-br from-electric-blue to-electric-blue rounded-2xl flex items-center justify-center shadow-lg shadow-electric-blue/25 group-hover:scale-105 transition-all">
                     <i data-lucide="heart-pulse" class="text-white w-5 h-5"></i>
                 </div>
                 <div>
-                    <span class="text-lg font-bold text-gray-800 tracking-tight">Aarogya</span>
-                    <span class="text-lg font-light text-[#667eea] tracking-tight"> Medical</span>
+                    <span class="text-lg font-bold text-dark-night tracking-tight">Aarogya</span>
+                    <span class="text-lg font-light text-electric-blue tracking-tight"> Medical</span>
                 </div>
             </a>
             
             <div class="flex items-center gap-4">
-                <form action="{% url 'patient_search' %}" method="GET" class="hidden md:flex items-center bg-gray-50 rounded-2xl px-4 py-2.5 border border-gray-200 hover:border-[#667eea]/30 transition-colors focus-within:border-[#667eea] w-72">
-                    <i data-lucide="search" class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0"></i>
-                    <input type="text" name="q" placeholder="Search patients..." class="bg-transparent text-sm font-medium text-gray-700 placeholder-gray-400 focus:outline-none w-full">
+                <form action="{% url 'patient_search' %}" method="GET" class="hidden md:flex items-center bg-silver-light rounded-2xl px-4 py-2.5 border border-heather-gray hover:border-electric-blue/30 transition-colors focus-within:border-electric-blue w-72">
+                    <i data-lucide="search" class="w-4 h-4 text-heather-gray mr-2 flex-shrink-0"></i>
+                    <input type="text" name="q" placeholder="Search patients..." class="bg-transparent text-sm font-medium text-dark-night placeholder-gray-400 focus:outline-none w-full">
                 </form>
                 
-                <div class="h-8 w-px bg-gray-200 hidden md:block"></div>
-                <span class="text-[10px] font-extrabold uppercase tracking-[0.15em] px-3.5 py-1.5 rounded-full shadow-sm {% if is_owner %}bg-[#667eea]/10 text-[#764ba2]{% else %}bg-emerald-100 text-emerald-600{% endif %}">
+                <div class="h-8 w-px bg-heather-gray hidden md:block"></div>
+                <span class="text-[10px] font-extrabold uppercase tracking-[0.15em] px-3.5 py-1.5 rounded-full shadow-sm {% if is_owner %}bg-electric-blue/10 text-electric-blue{% else %}bg-emerald-100 text-emerald-600{% endif %}">
                     {% if request.user.is_superuser %}Super Admin{% elif is_owner %}Clinic Owner{% else %}Receptionist{% endif %}
                 </span>
                 
                 <div class="hidden md:flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white font-bold text-sm shadow-md">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-electric-blue to-electric-blue flex items-center justify-center text-white font-bold text-sm shadow-md">
                         {{ request.user.username|make_list|first|upper }}
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-sm font-bold text-gray-800">{{ request.user.username }}</span>
+                        <span class="text-sm font-bold text-dark-night">{{ request.user.username }}</span>
                     </div>
                 </div>
                 
@@ -143,38 +261,38 @@
         <!-- FLASH MESSAGES -->
         {% if messages %}
             {% for message in messages %}
-                <div class="p-4 mb-6 rounded-2xl flex items-center gap-3 shadow-sm border animate-in {% if message.tags == 'error' %}bg-red-50 text-red-600 border-red-200{% else %}bg-emerald-50 text-emerald-600 border-emerald-200{% endif %}">
-                    <i data-lucide="{% if message.tags == 'error' %}alert-circle{% else %}check-circle-2{% endif %}" class="w-5 h-5"></i>
+                <div class="p-4 mb-6 rounded-2xl flex items-center gap-3 shadow-sm border animate-in {% if message.tags == 'error' %}bg-red-50 text-red-600 border-red-200{% elif message.tags == 'warning' %}bg-amber-50 text-amber-600 border-amber-200{% else %}bg-emerald-50 text-emerald-600 border-emerald-200{% endif %}">
+                    <i data-lucide="{% if message.tags == 'error' %}alert-circle{% elif message.tags == 'warning' %}alert-triangle{% else %}check-circle-2{% endif %}" class="w-5 h-5"></i>
                     <span class="font-semibold text-sm">{{ message }}</span>
                 </div>
             {% endfor %}
         {% endif %}
 
         <!-- STAT CARDS -->
-        <h2 class="text-[11px] font-extrabold tracking-[0.2em] text-gray-400 uppercase mb-5 animate-in">Today's Pulse</h2>
+        <h2 class="text-[11px] font-extrabold tracking-[0.2em] text-heather-gray uppercase mb-5 animate-in">Today's Pulse</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-gray-100/80 card-hover gradient-border animate-in delay-1">
-                <div class="w-9 h-9 sm:w-11 sm:h-11 bg-blue-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-blue-500 mb-3 sm:mb-4"><i data-lucide="calendar-check" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-0.5">{{ total_today }}</h3>
-                <p class="text-[10px] sm:text-xs text-gray-400 font-semibold tracking-wide">Appointments</p>
+            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-heather-gray/30 card-hover gradient-border animate-in delay-1">
+                <div class="w-9 h-9 sm:w-11 sm:h-11 bg-silver-light rounded-xl sm:rounded-2xl flex items-center justify-center text-blue-500 mb-3 sm:mb-4"><i data-lucide="calendar-check" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-dark-night mb-0.5">{{ total_today }}</h3>
+                <p class="text-[10px] sm:text-xs text-heather-gray font-semibold tracking-wide">Appointments</p>
             </div>
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-gray-100/80 card-hover gradient-border animate-in delay-1">
+            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-heather-gray/30 card-hover gradient-border animate-in delay-1">
                 <div class="w-9 h-9 sm:w-11 sm:h-11 bg-violet-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-violet-500 mb-3 sm:mb-4"><i data-lucide="user-plus" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-0.5">{{ new_patients }}</h3>
-                <p class="text-[10px] sm:text-xs text-gray-400 font-semibold tracking-wide">New Patients</p>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-dark-night mb-0.5">{{ new_patients }}</h3>
+                <p class="text-[10px] sm:text-xs text-heather-gray font-semibold tracking-wide">New Patients</p>
             </div>
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-gray-100/80 card-hover gradient-border animate-in delay-1">
+            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-heather-gray/30 card-hover gradient-border animate-in delay-1">
                 <div class="w-9 h-9 sm:w-11 sm:h-11 bg-amber-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-amber-500 mb-3 sm:mb-4"><i data-lucide="users" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-0.5">{{ old_patients }}</h3>
-                <p class="text-[10px] sm:text-xs text-gray-400 font-semibold tracking-wide">Returning</p>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-dark-night mb-0.5">{{ old_patients }}</h3>
+                <p class="text-[10px] sm:text-xs text-heather-gray font-semibold tracking-wide">Returning</p>
             </div>
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-gray-100/80 card-hover gradient-border animate-in delay-1">
+            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-heather-gray/30 card-hover gradient-border animate-in delay-1">
                 <div class="w-9 h-9 sm:w-11 sm:h-11 bg-teal-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-teal-500 mb-3 sm:mb-4"><i data-lucide="heart" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-0.5">{{ total_patients_all }}</h3>
-                <p class="text-[10px] sm:text-xs text-gray-400 font-semibold tracking-wide">Total Patients</p>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-dark-night mb-0.5">{{ total_patients_all }}</h3>
+                <p class="text-[10px] sm:text-xs text-heather-gray font-semibold tracking-wide">Total Patients</p>
             </div>
             {% if is_owner %}
-            <div class="bg-gradient-to-br from-[#667eea] to-[#764ba2] rounded-3xl p-4 sm:p-5 shadow-lg shadow-[#667eea]/20 card-hover animate-in delay-1">
+            <div class="bg-gradient-to-br from-[#3E96F4] to-[#2b82dc] rounded-3xl p-4 sm:p-5 shadow-lg shadow-[#3E96F4]/15 card-hover animate-in delay-1">
                 <div class="w-9 h-9 sm:w-11 sm:h-11 bg-white/15 backdrop-blur-md rounded-xl sm:rounded-2xl flex items-center justify-center text-white mb-3 sm:mb-4"><i data-lucide="indian-rupee" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
                 <h3 class="text-2xl sm:text-3xl font-extrabold text-white mb-0.5">₹{{ revenue_today }}</h3>
                 <p class="text-[10px] sm:text-xs text-white/60 font-semibold tracking-wide">Today's Revenue</p>
@@ -182,95 +300,55 @@
             {% endif %}
         </div>
 
-        <!-- CHARTS SECTION -->
-        {% if is_owner %}
-        <div class="mb-10 animate-in delay-1">
-            <div class="flex items-center justify-between mb-5">
-                <div class="flex items-center gap-3">
-                    <h2 class="text-[11px] font-extrabold tracking-[0.2em] text-[#764ba2] uppercase">Analytics Overview</h2>
-                </div>
-                <!-- Chart Filters -->
-                <form method="GET" class="flex gap-2">
-                    <input type="hidden" name="display_date" value="{{ display_date }}">
-                    <input type="hidden" name="schedule_filter" value="{{ schedule_filter }}">
-                    <select name="chart_range" onchange="this.form.submit()" class="text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none">
-                        <option value="7days" {% if chart_range == '7days' %}selected{% endif %}>Last 7 Days</option>
-                        <option value="30days" {% if chart_range == '30days' %}selected{% endif %}>Last 30 Days</option>
-                        <option value="this_week" {% if chart_range == 'this_week' %}selected{% endif %}>This Week</option>
-                        <option value="this_month" {% if chart_range == 'this_month' %}selected{% endif %}>This Month</option>
-                        <option value="last_month" {% if chart_range == 'last_month' %}selected{% endif %}>Last Month</option>
-                        <option value="custom" {% if chart_range == 'custom' %}selected{% endif %}>Custom Range</option>
-                    </select>
-                    {% if chart_range == 'custom' %}
-                    <input type="date" name="chart_start" value="{{ chart_start }}" class="text-xs border rounded-lg px-2" required>
-                    <input type="date" name="chart_end" value="{{ chart_end }}" class="text-xs border rounded-lg px-2" required>
-                    <button type="submit" class="bg-[#667eea] text-white px-3 py-1 rounded-lg text-xs font-bold">Apply</button>
-                    {% endif %}
-                </form>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Patient Chart -->
-                <div class="bg-white rounded-[1.4rem] p-6 shadow-sm border border-gray-100/80">
-                    <h3 class="text-base font-bold text-gray-800 mb-4">Patient Visits</h3>
-                    <div class="chart-container"><canvas id="patientChart"></canvas></div>
-                </div>
-                <!-- Revenue Chart -->
-                <div class="bg-white rounded-[1.4rem] p-6 shadow-sm border border-gray-100/80">
-                    <h3 class="text-base font-bold text-gray-800 mb-4">Revenue Trend</h3>
-                    <div class="chart-container"><canvas id="revenueChart"></canvas></div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
 
-        <!-- MAIN CONTENT (FORM + SCHEDULE) -->
+          <!-- MAIN CONTENT (FORM + SCHEDULE) -->
         <div class="flex flex-col xl:grid xl:grid-cols-12 gap-8 animate-in delay-1">
             
             <!-- BOOKING FORM -->
             <div class="xl:col-span-4">
-                <div class="bg-white p-5 sm:p-7 rounded-[1.4rem] shadow-sm border border-gray-100/80 sticky top-24">
+                <div class="bg-white p-5 sm:p-7 rounded-[1.5rem] shadow-[0_1px_3px_rgba(0,0,0,0.06)] border border-[#E8E6E3] sticky top-24">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-11 h-11 bg-[#667eea]/10 rounded-2xl flex items-center justify-center text-[#667eea]"><i data-lucide="calendar-plus" class="w-5 h-5"></i></div>
+                        <div class="w-11 h-11 bg-electric-blue/10 rounded-2xl flex items-center justify-center text-electric-blue"><i data-lucide="calendar-plus" class="w-5 h-5"></i></div>
                         <div>
-                            <h2 class="text-lg font-bold text-gray-800">Book Appointment</h2>
-                            <p class="text-[10px] text-gray-400 font-medium tracking-wide">Enter details below</p>
+                            <h2 class="text-lg font-bold text-dark-night">Book Appointment</h2>
+                            <p class="text-[10px] text-heather-gray font-medium tracking-wide">Enter details below</p>
                         </div>
                     </div>
                     
-                    <form method="POST" class="space-y-4">
+                    <form method="POST" class="space-y-4" id="bookingForm" onsubmit="return validateBooking(event)">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="add_appointment">
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-1.5">Full Name</label>
-                            <input type="text" name="name" required class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. Ramesh Patel">
+                            <label class="block text-xs font-bold text-dark-night mb-1.5">Full Name</label>
+                            <input type="text" name="name" required class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. Ramesh Patel">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-1.5">Phone Number</label>
-                            <input type="text" name="phone" required class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. 9876543210">
+                            <label class="block text-xs font-bold text-dark-night mb-1.5">Phone Number</label>
+                            <input type="text" name="phone" required class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. 9876543210">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1.5">Email</label>
-                                <input type="email" name="email" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. info@example.com">
+                                <label class="block text-xs font-bold text-dark-night mb-1.5">Email</label>
+                                <input type="email" name="email" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. info@example.com">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1.5">Location</label>
-                                <input type="text" name="location" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. Mumbai">
+                                <label class="block text-xs font-bold text-dark-night mb-1.5">Location</label>
+                                <input type="text" name="location" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. Mumbai">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-1.5">Date of Birth</label>
-                            <input type="text" name="dob" id="dob_picker" placeholder="Select DOB" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium">
+                            <label class="block text-xs font-bold text-dark-night mb-1.5">Date of Birth</label>
+                            <input type="text" name="dob" id="dob_picker" placeholder="Select DOB" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium">
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1.5">Date</label>
-                                <input type="text" name="date" id="booking_date" required value="{{ display_date }}" placeholder="Select Date" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium">
+                                <label class="block text-xs font-bold text-dark-night mb-1.5">Date</label>
+                                <input type="text" name="date" id="booking_date" required value="{{ display_date }}" placeholder="Select Date" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1.5">Time</label>
-                                <select name="time_slot" id="booking_time" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium">
+                                <label class="block text-xs font-bold text-dark-night mb-1.5">Time</label>
+                                <select name="time_slot" id="booking_time" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium">
                                     <option value="09:00 AM">09:00 AM</option><option value="09:30 AM">09:30 AM</option>
                                     <option value="10:00 AM">10:00 AM</option><option value="10:30 AM">10:30 AM</option>
                                     <option value="11:00 AM">11:00 AM</option><option value="11:30 AM">11:30 AM</option>
@@ -283,10 +361,10 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-1.5">Symptoms</label>
-                            <textarea name="symptoms" rows="2" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300 resize-none"></textarea>
+                            <label class="block text-xs font-bold text-dark-night mb-1.5">Symptoms</label>
+                            <textarea name="symptoms" rows="2" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium placeholder-gray-300 resize-none"></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white py-3 rounded-xl hover:shadow-xl hover:shadow-[#667eea]/25 transition-all mt-2 font-bold text-sm">
+                        <button type="submit" class="w-full btn-primary py-3.5 rounded-xl mt-2 text-sm">
                             Confirm Booking
                         </button>
                     </form>
@@ -295,166 +373,125 @@
 
             <!-- APPOINTMENT SCHEDULE -->
             <div class="xl:col-span-8 flex flex-col h-full">
-                <div class="bg-white rounded-[1.4rem] shadow-sm border border-gray-100/80 overflow-hidden flex flex-col h-full">
-                    <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50/50 to-white">
+                <div class="bg-white rounded-[1.5rem] shadow-[0_1px_3px_rgba(0,0,0,0.06)] border border-[#E8E6E3] overflow-hidden flex flex-col h-full">
+                    <div class="p-5 sm:p-6 border-b border-[#EDEEEB]">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                            <h2 class="text-xl font-bold text-gray-800">{{ schedule_title }}</h2>
-                            <form method="GET" class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-100">
-                                <select name="schedule_filter" onchange="this.form.submit()" class="pl-3 pr-7 py-2 rounded-lg border-none focus:ring-0 bg-transparent text-xs font-bold text-gray-700">
-                                    <option value="day" {% if schedule_filter == 'day' %}selected{% endif %}>Day</option>
-                                    <option value="week" {% if schedule_filter == 'week' %}selected{% endif %}>Week</option>
-                                    <option value="month" {% if schedule_filter == 'month' %}selected{% endif %}>Month</option>
-                                    <option value="lifetime" {% if schedule_filter == 'lifetime' %}selected{% endif %}>All Time</option>
-                                </select>
-                                <div class="w-px h-5 bg-gray-200"></div>
-                                <input type="text" name="display_date" id="filter_date" value="{{ display_date }}" class="px-2 py-2 rounded-lg border-none focus:ring-0 bg-transparent text-xs font-bold text-gray-500 w-24">
-                            </form>
+                            <h2 class="text-xl font-bold text-dark-night">Appointment Schedule</h2>
                         </div>
                         <!-- Appointment Name Filter -->
                         <form method="GET" class="relative max-w-sm">
                             <input type="hidden" name="schedule_filter" value="{{ schedule_filter }}">
                             <input type="hidden" name="display_date" value="{{ display_date }}">
                             <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                                <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                                <i data-lucide="search" class="w-4 h-4 text-heather-gray"></i>
                             </div>
-                            <input type="text" name="patient_q" value="{{ patient_search_query }}" placeholder="Filter appointments by name..." class="pl-9 pr-3 py-2 w-full text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[#667eea]">
+                            <input type="text" name="patient_q" value="{{ patient_search_query }}" placeholder="Filter appointments by name..." class="pl-9 pr-3 py-2 w-full text-sm border border-heather-gray rounded-lg focus:outline-none focus:border-electric-blue">
                             {% if patient_search_query %}
-                            <a href="?schedule_filter={{ schedule_filter }}&display_date={{ display_date }}" class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-red-500">
+                            <a href="?schedule_filter={{ schedule_filter }}&display_date={{ display_date }}" class="absolute inset-y-0 right-3 flex items-center text-heather-gray hover:text-red-500">
                                 <i data-lucide="x" class="w-4 h-4"></i>
                             </a>
                             {% endif %}
                         </form>
                     </div>
 
-                    <!-- Table -->
-                    <div class="overflow-x-auto flex-1">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="text-gray-400 text-[9px] sm:text-[10px] uppercase tracking-[0.15em] bg-gray-50/30 border-b">
-                                    <th class="px-4 sm:px-6 py-3 sm:py-4 font-bold">Patient</th>
-                                    <th class="px-3 sm:px-4 py-3 sm:py-4 font-bold">Time</th>
-                                    <th class="px-3 sm:px-4 py-3 sm:py-4 font-bold hidden md:table-cell">Symptoms</th>
-                                    <th class="px-3 sm:px-4 py-3 sm:py-4 font-bold text-right">Fee</th>
-                                    <th class="px-4 sm:px-6 py-3 sm:py-4 font-bold text-center">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-50">
-                                {% for appt in appointments %}
-                                <tr class="hover:bg-gray-50/50 cursor-pointer" onclick="toggleExpand('{{ appt.id }}')">
-                                    <td class="px-4 sm:px-6 py-3 sm:py-4">
-                                        <div class="flex items-center gap-2 sm:gap-3">
-                                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#667eea]/10 text-[#667eea] flex items-center justify-center font-bold text-xs sm:text-sm">{{ appt.patient.name|make_list|first|upper }}</div>
-                                            <div>
-                                                <a href="{% url 'patient_history' appt.patient.id %}" class="font-bold text-gray-800 text-xs sm:text-sm hover:text-[#667eea]" onclick="event.stopPropagation()">{{ appt.patient.name }}</a>
-                                                <p class="text-[9px] sm:text-[10px] text-gray-400 mt-0.5">{{ appt.patient.phone_number }}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-3 sm:px-4 py-3 sm:py-4">
-                                        <span class="text-[10px] sm:text-xs font-bold text-gray-700 bg-gray-50 px-2 py-1 rounded">{{ appt.time_slot }}</span>
-                                        <p class="text-[9px] sm:text-[10px] text-gray-400 mt-1">{{ appt.date|date:"d M" }}</p>
-                                    </td>
-                                    <td class="px-3 sm:px-4 py-3 sm:py-4 hidden md:table-cell">
-                                        <span class="text-[10px] sm:text-xs text-gray-600 line-clamp-1 max-w-[150px]">{{ appt.symptoms|default:"-" }}</span>
-                                    </td>
-                                    <td class="px-3 sm:px-4 py-3 sm:py-4 text-right font-extrabold text-gray-800 text-xs sm:text-sm">₹{{ appt.fee_charged }}</td>
-                                    <td class="px-4 sm:px-6 py-3 sm:py-4 text-center" onclick="event.stopPropagation()">
-                                        <!-- Doctor selects status, triggers modal setup if Completed -->
-                                        <select onchange="handleStatusChange(this, '{{ appt.id }}')" class="text-[9px] sm:text-[10px] font-bold uppercase px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg border focus:outline-none transition-all cursor-pointer
-                                            {% if appt.status == 'Pending' %}bg-amber-50 text-amber-600 border-amber-200/60
-                                            {% elif appt.status == 'Completed' %}bg-emerald-50 text-emerald-600 border-emerald-200/60
-                                            {% else %}bg-rose-50 text-rose-600 border-rose-200/60{% endif %}">
-                                            <option value="Pending" {% if appt.status == 'Pending' %}selected{% endif %}>Pending</option>
-                                            <option value="Completed" {% if appt.status == 'Completed' %}selected{% endif %}>Completed</option>
-                                            <option value="Cancelled" {% if appt.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
-                                        </select>
-                                        <!-- Hidden form to submit instantly if not 'Completed' -->
-                                        <form method="POST" id="form-status-{{ appt.id }}" class="hidden">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="action" value="update_status">
-                                            <input type="hidden" name="appointment_id" value="{{ appt.id }}">
-                                            <input type="hidden" name="status" id="input-status-{{ appt.id }}" value="{{ appt.status }}">
-                                            <input type="hidden" name="medicine_given" value="{{ appt.medicine_given }}">
-                                        </form>
-                                    </td>
-                                </tr>
-                                 <tr id="expand-{{ appt.id }}" style="display:none;">
-                                     <td colspan="5" class="p-0">
-                                         <div class="bg-gray-50 border-l-4 border-[#667eea] p-4 text-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                             <div>
-                                                 <p><b>Height:</b> {{ appt.height_cm|default:"-" }} cm | <b>Weight:</b> {{ appt.weight_kg|default:"-" }} kg</p>
-                                                 <p class="mt-2 text-gray-500 text-xs"><b>Email:</b> {{ appt.patient.email|default:"-" }} | <b>Location:</b> {{ appt.patient.location|default:"-" }}</p>
-                                                 <p class="mt-2"><b>Symptoms:</b> {{ appt.symptoms|default:"-" }}</p>
-                                                 <p class="mt-2 text-[#667eea] font-bold"><b>Medicine Given:</b> {{ appt.medicine_given|default:"-" }} 
-                                                     {% if appt.medicine_price %}(Price: ₹{{ appt.medicine_price }}){% endif %}
-                                                 </p>
-                                             </div>
-                                             <div>
-                                                 <a href="{% url 'patient_history' appt.patient.id %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white px-4 py-2 rounded-xl text-xs font-bold hover:shadow-lg hover:shadow-[#667eea]/25 transition-all">
-                                                     <i data-lucide="history" class="w-4 h-4"></i> View Full History
-                                                 </a>
-                                             </div>
-                                         </div>
-                                     </td>
-                                 </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5" class="py-10 text-center text-gray-400 text-sm">No appointments found.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <!-- Calendar Container -->
+                    <div class="p-3 sm:p-4 flex-1">
+                        <div id="calendar" class="w-full"></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        
+        <!-- CHARTS SECTION -->
+        {% if is_owner %}
+        <div class="mb-10 animate-in delay-1">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-[11px] font-extrabold tracking-[0.2em] text-electric-blue uppercase">Analytics Overview</h2>
+                </div>
+                <!-- Chart Filters -->
+                <form method="GET" class="flex gap-2">
+                    <input type="hidden" name="display_date" value="{{ display_date }}">
+                    <input type="hidden" name="schedule_filter" value="{{ schedule_filter }}">
+                    <select name="chart_range" onchange="this.form.submit()" class="text-xs font-bold text-dark-night bg-white border border-heather-gray rounded-lg px-3 py-1.5 focus:outline-none">
+                        <option value="7days" {% if chart_range == '7days' %}selected{% endif %}>Last 7 Days</option>
+                        <option value="30days" {% if chart_range == '30days' %}selected{% endif %}>Last 30 Days</option>
+                        <option value="this_week" {% if chart_range == 'this_week' %}selected{% endif %}>This Week</option>
+                        <option value="this_month" {% if chart_range == 'this_month' %}selected{% endif %}>This Month</option>
+                        <option value="last_month" {% if chart_range == 'last_month' %}selected{% endif %}>Last Month</option>
+                        <option value="custom" {% if chart_range == 'custom' %}selected{% endif %}>Custom Range</option>
+                    </select>
+                    {% if chart_range == 'custom' %}
+                    <input type="date" name="chart_start" value="{{ chart_start }}" class="text-xs border rounded-lg px-2" required>
+                    <input type="date" name="chart_end" value="{{ chart_end }}" class="text-xs border rounded-lg px-2" required>
+                    <button type="submit" class="bg-electric-blue text-white px-3 py-1 rounded-lg text-xs font-bold">Apply</button>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Patient Chart -->
+                <div class="bg-white rounded-[1.4rem] p-6 shadow-sm border border-heather-gray/30">
+                    <h3 class="text-base font-bold text-dark-night mb-4">Patient Visits</h3>
+                    <div class="chart-container"><canvas id="patientChart"></canvas></div>
+                </div>
+                <!-- Revenue Chart -->
+                <div class="bg-white rounded-[1.4rem] p-6 shadow-sm border border-heather-gray/30">
+                    <h3 class="text-base font-bold text-dark-night mb-4">Revenue Trend</h3>
+                    <div class="chart-container"><canvas id="revenueChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+      
+
         <!-- RECENT PATIENT HISTORIES (NEW SECTION) -->
-        <div class="mt-8 bg-white p-7 rounded-[1.4rem] shadow-sm border border-gray-100/80 animate-in delay-1">
+        <div class="mt-8 bg-white p-7 rounded-[1.5rem] shadow-[0_1px_3px_rgba(0,0,0,0.06)] border border-[#E8E6E3] animate-in delay-1">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500">
+                    <div class="w-10 h-10 bg-silver-light rounded-xl flex items-center justify-center text-electric-blue">
                         <i data-lucide="history" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-bold text-gray-800">Recent Histories</h2>
-                        <p class="text-[10px] text-gray-400 font-medium tracking-wide">Latest completed appointments</p>
+                        <h2 class="text-base font-bold text-dark-night">Recent Histories</h2>
+                        <p class="text-[10px] text-heather-gray font-medium tracking-wide">Latest completed appointments</p>
                     </div>
                 </div>
-                <a href="{% url 'patient_search' %}" class="text-xs font-bold text-white bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-all hidden sm:block">All Patients</a>
+                <a href="{% url 'patient_search' %}" class="text-xs font-bold text-white bg-dark-night hover:bg-gray-700 px-4 py-2 rounded-lg transition-all hidden sm:block">All Patients</a>
             </div>
             
             <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
                 {% for history in recent_histories %}
-                <div class="bg-gray-50 border border-gray-100 rounded-2xl p-3 sm:p-4 hover:border-indigo-200 transition-colors shadow-sm relative group card-hover">
+                <div class="bg-silver-light border border-heather-gray/50 rounded-2xl p-3 sm:p-4 hover:border-electric-blue transition-colors shadow-sm relative group card-hover">
                     <a href="{% url 'patient_history' history.patient.id %}" class="absolute inset-0 z-10"></a>
                     <div class="flex justify-between items-start mb-3">
                         <div>
-                            <p class="font-bold text-gray-800 text-sm group-hover:text-indigo-600 transition-colors">{{ history.patient.name }}</p>
-                            <p class="text-[10px] text-gray-500">{{ history.patient.phone_number }}</p>
+                            <p class="font-bold text-dark-night text-sm group-hover:text-electric-blue transition-colors">{{ history.patient.name }}</p>
+                            <p class="text-[10px] text-heather-gray">{{ history.patient.phone_number }}</p>
                         </div>
-                        <span class="text-[9px] font-extrabold bg-white px-2 py-1 rounded shadow-sm text-gray-500">{{ history.date|date:"d M" }}</span>
+                        <span class="text-[9px] font-extrabold bg-white px-2 py-1 rounded shadow-sm text-heather-gray">{{ history.date|date:"d M" }}</span>
                     </div>
                     <div class="space-y-2">
-                        <p class="text-[11px] text-gray-600 line-clamp-2"><b>Symptoms:</b> {{ history.symptoms|default:"-" }}</p>
-                        <p class="text-[11px] text-indigo-600 font-medium line-clamp-2"><b>Meds:</b> {{ history.medicine_given|default:"-" }}</p>
+                        <p class="text-[11px] text-dark-night line-clamp-2"><b>Symptoms:</b> {{ history.symptoms|default:"-" }}</p>
+                        <p class="text-[11px] text-electric-blue font-medium line-clamp-2"><b>Meds:</b> {{ history.medicine_given|default:"-" }}</p>
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-span-full py-8 text-center text-gray-400 text-sm font-medium">No recent histories found.</div>
+                <div class="col-span-full py-8 text-center text-heather-gray text-sm font-medium">No recent histories found.</div>
                 {% endfor %}
             </div>
             
-            <a href="{% url 'patient_search' %}" class="mt-6 block text-center text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 py-3 rounded-xl transition-all sm:hidden">All Patients</a>
+            <a href="{% url 'patient_search' %}" class="mt-6 block text-center text-sm font-bold text-electric-blue bg-silver-light hover:bg-silver-light py-3 rounded-xl transition-all sm:hidden">All Patients</a>
         </div>
     </div>
 
     <!-- MEDICINE MODAL -->
-    <div id="medicineModal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] items-center justify-center hidden">
-        <div class="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full mx-4 border border-gray-100">
+    <div id="medicineModal" class="fixed inset-0 bg-dark-night/50 backdrop-blur-sm z-[100] items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-[0_24px_48px_-12px_rgba(0,0,0,0.15)] p-6 max-w-md w-full mx-4 border border-[#E8E6E3]">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-800">Complete Appointment</h3>
-                <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <h3 class="text-lg font-bold text-dark-night">Complete Appointment</h3>
+                <button type="button" onclick="closeModal()" class="text-heather-gray hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form method="POST" id="modalForm">
                 {% csrf_token %}
@@ -464,31 +501,121 @@
                 
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1.5">Height (cm)</label>
-                        <input type="number" step="0.1" name="modal_height" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. 170.5">
+                        <label class="block text-xs font-bold text-dark-night mb-1.5">Height (cm)</label>
+                        <input type="number" step="0.1" name="modal_height" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. 170.5">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1.5">Weight (kg)</label>
-                        <input type="number" step="0.1" name="modal_weight" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. 68.2">
+                        <label class="block text-xs font-bold text-dark-night mb-1.5">Weight (kg)</label>
+                        <input type="number" step="0.1" name="modal_weight" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium placeholder-gray-300" placeholder="e.g. 68.2">
                     </div>
                 </div>
 
-                <label class="block text-xs font-bold text-gray-600 mb-1.5">Medicine Prescribed</label>
-                <textarea name="medicine_given" id="modal_medicine" rows="3" class="w-full border border-gray-200 rounded-xl p-3 focus:outline-none focus:border-[#667eea] text-sm font-medium mb-4" placeholder="Enter medicine details..."></textarea>
+                <label class="block text-xs font-bold text-dark-night mb-1.5">Medicine Prescribed</label>
+                <textarea name="medicine_given" id="modal_medicine" rows="3" class="w-full border border-heather-gray rounded-xl p-3 focus:outline-none focus:border-electric-blue text-sm font-medium mb-4" placeholder="Enter medicine details..."></textarea>
                 
                 <div class="mb-4">
-                    <label class="block text-xs font-bold text-gray-600 mb-1.5">Medicine Total Price (₹)</label>
-                    <input type="number" step="0.01" name="medicine_price" class="w-full px-4 py-2.5 rounded-xl input-modern bg-gray-50/50 text-sm font-medium placeholder-gray-300" placeholder="Optional: medicine cost">
+                    <label class="block text-xs font-bold text-dark-night mb-1.5">Medicine Total Price (₹)</label>
+                    <input type="number" step="0.01" name="medicine_price" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium placeholder-gray-300" placeholder="Optional: medicine cost">
                 </div>
                 
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-bold text-gray-600 bg-gray-100 rounded-lg transition-colors hover:bg-gray-200">Cancel</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-[#667eea] rounded-lg transition-colors hover:bg-[#5a67d8]">Complete Appointment</button>
+                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 text-sm font-bold text-dark-night bg-silver-light rounded-xl transition-all hover:bg-heather-gray/30">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 text-sm btn-primary rounded-xl">Complete Appointment</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- EDIT MODAL -->
+    <div id="editModal" class="fixed inset-0 bg-dark-night/50 backdrop-blur-sm z-[100] items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-[0_24px_48px_-12px_rgba(0,0,0,0.15)] p-6 max-w-md w-full mx-4 border border-[#E8E6E3]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-dark-night">Edit Appointment</h3>
+                <button type="button" onclick="closeEditModal()" class="text-heather-gray hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form method="POST" id="editForm" onsubmit="return validateEdit(event)">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit_appointment">
+                <input type="hidden" name="appointment_id" id="edit_appt_id">
+                
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-dark-night mb-1.5">New Date</label>
+                    <input type="text" name="new_date" id="edit_date" required class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-dark-night mb-1.5">New Time</label>
+                    <select name="new_time" id="edit_time" required class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium">
+                        <option value="09:00 AM">09:00 AM</option><option value="09:30 AM">09:30 AM</option>
+                        <option value="10:00 AM">10:00 AM</option><option value="10:30 AM">10:30 AM</option>
+                        <option value="11:00 AM">11:00 AM</option><option value="11:30 AM">11:30 AM</option>
+                        <option value="12:00 PM">12:00 PM</option><option value="12:30 PM">12:30 PM</option>
+                        <option value="02:00 PM">02:00 PM</option><option value="02:30 PM">02:30 PM</option>
+                        <option value="03:00 PM">03:00 PM</option><option value="03:30 PM">03:30 PM</option>
+                        <option value="04:00 PM">04:00 PM</option><option value="04:30 PM">04:30 PM</option>
+                        <option value="05:00 PM">05:00 PM</option><option value="05:30 PM">05:30 PM</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 text-sm font-bold text-dark-night bg-silver-light rounded-xl transition-all hover:bg-heather-gray/30">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 text-sm btn-primary rounded-xl">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EVENT DETAILS MODAL -->
+    <div id="eventDetailsModal" class="fixed inset-0 bg-dark-night/50 backdrop-blur-sm z-[100] items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-[0_24px_48px_-12px_rgba(0,0,0,0.15)] p-6 max-w-md w-full mx-4 border border-[#E8E6E3]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-dark-night">Appointment Details</h3>
+                <button type="button" onclick="closeDetailsModal()" class="text-heather-gray hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="mb-4">
+                <p class="text-sm font-bold text-dark-night" id="details_patient"></p>
+                <p class="text-xs text-heather-gray mt-1">Symptoms: <span id="details_symptoms" class="text-dark-night font-medium"></span></p>
+                <p class="text-xs text-heather-gray mt-1">Fee: <span id="details_fee" class="text-green-600 font-extrabold"></span></p>
+            </div>
+            
+            <div class="flex items-center gap-2 mb-2">
+                <form method="POST" id="detailsStatusForm" class="flex items-center gap-2 flex-1 hidden">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_status">
+                    <input type="hidden" name="appointment_id" id="details_appt_id">
+                    <input type="hidden" name="status" id="input-status-details">
+                    <input type="hidden" name="medicine_given" value="">
+                </form>
+                
+                <select id="details_status" onchange="handleDetailsStatusChange(this)" class="text-xs font-bold uppercase px-3 py-2 rounded-lg border w-full flex-1">
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                
+                <button type="button" id="btn_edit_appt" class="px-4 py-2 bg-silver-light text-electric-blue rounded-lg hover:bg-silver-light font-bold text-xs flex items-center gap-2">
+                    <i data-lucide="edit" class="w-4 h-4"></i> Edit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WARNING MODAL (Custom Alert/Confirm) -->
+    <div id="warningModal" class="fixed inset-0 bg-dark-night/50 backdrop-blur-md z-[200] items-center justify-center hidden">
+        <div class="bg-white rounded-3xl shadow-[0_24px_48px_-12px_rgba(0,0,0,0.18)] p-8 max-w-sm w-full mx-4 border border-[#E8E6E3] text-center">
+            <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-lg font-bold text-dark-night mb-2">Slot Already Booked</h3>
+            <p class="text-heather-gray text-sm leading-relaxed mb-6" id="warningMessage">This time slot has 1 patient already. Do you want to add a 2nd appointment?</p>
+            <div class="flex gap-3">
+                <button type="button" onclick="closeWarningModal(false)" class="flex-1 px-5 py-3 rounded-xl bg-silver-light text-dark-night font-bold text-sm hover:bg-heather-gray/20 transition-all">Cancel</button>
+                <button type="button" onclick="closeWarningModal(true)" class="flex-1 px-5 py-3 rounded-xl btn-primary text-sm">Yes, Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script>
         lucide.createIcons();
 
@@ -526,6 +653,84 @@
                 selectElem.value = originalStatuses[apptId];
             }
         }
+
+        // EDIT MODAL LOGIC
+        let editDatePicker;
+        function openEditModal(id, date, time) {
+            document.getElementById('edit_appt_id').value = id;
+            document.getElementById('edit_time').value = time;
+            document.getElementById('editModal').classList.add('active');
+            
+            if (!editDatePicker) {
+                editDatePicker = flatpickr("#edit_date", {
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    allowInput: true,
+                    monthSelectorType: "dropdown",
+                });
+            }
+            editDatePicker.setDate(date);
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        // EVENT DETAILS MODAL
+        function closeDetailsModal() {
+            document.getElementById('eventDetailsModal').classList.remove('active');
+        }
+        
+        function handleDetailsStatusChange(select) {
+            const apptId = document.getElementById('details_appt_id').value;
+            if (select.value === 'Completed') {
+                closeDetailsModal();
+                document.getElementById('modal_appt_id').value = apptId;
+                document.getElementById('medicineModal').classList.add('active');
+                select.value = 'Pending';
+            } else {
+                document.getElementById('input-status-details').value = select.value;
+                document.getElementById('detailsStatusForm').submit();
+            }
+        }
+
+        // FULLCALENDAR INIT
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEvents = JSON.parse('{{ calendar_events_json|safe|escapejs }}');
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridDay',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: calendarEvents,
+                slotMinTime: '08:00:00',
+                slotMaxTime: '19:00:00',
+                allDaySlot: false,
+                slotEventOverlap: false,
+                dayMaxEvents: true,
+                height: 600,
+                eventClick: function(info) {
+                    const props = info.event.extendedProps;
+                    document.getElementById('details_patient').textContent = props.patientName + ' (' + props.phone + ')';
+                    document.getElementById('details_symptoms').textContent = props.symptoms || '-';
+                    document.getElementById('details_fee').textContent = '₹' + props.fee;
+                    
+                    document.getElementById('details_appt_id').value = info.event.id;
+                    document.getElementById('details_status').value = props.status;
+                    
+                    document.getElementById('btn_edit_appt').onclick = function() {
+                        closeDetailsModal();
+                        openEditModal(info.event.id, props.date, props.timeSlot);
+                    };
+                    
+                    document.getElementById('eventDetailsModal').classList.add('active');
+                }
+            });
+            calendar.render();
+        });
 
         // BOOKED SLOT LOGIC
         const bookedSlotsData = JSON.parse('{{ booked_slots_json|safe }}');
@@ -565,10 +770,20 @@
             const selectedDate = document.getElementById('booking_date').value;
             const timeSelect = document.getElementById('booking_time');
             const booked = bookedSlotsData[selectedDate] || [];
+            
+            const counts = {};
+            booked.forEach(slot => {
+                counts[slot] = (counts[slot] || 0) + 1;
+            });
+
             Array.from(timeSelect.options).forEach((opt) => {
-                if (booked.includes(opt.value)) {
+                const count = counts[opt.value] || 0;
+                if (count >= 2) {
                     opt.disabled = true;
-                    opt.text = opt.value + " (Booked)";
+                    opt.text = opt.value + " (Fully Booked)";
+                } else if (count === 1) {
+                    opt.disabled = false;
+                    opt.text = opt.value + " (1 Booked)";
                 } else {
                     opt.disabled = false;
                     opt.text = opt.value;
@@ -578,6 +793,70 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateAvailableTimeSlots();
         });
+
+        function validateBooking(event) {
+            if (window.bypassWarning) {
+                window.bypassWarning = false;
+                return true;
+            }
+
+            const selectedDate = document.getElementById('booking_date').value;
+            const timeSelect = document.getElementById('booking_time');
+            const selectedTime = timeSelect.value;
+            
+            const booked = bookedSlotsData[selectedDate] || [];
+            const counts = {};
+            booked.forEach(slot => { counts[slot] = (counts[slot] || 0) + 1; });
+            
+            if (counts[selectedTime] === 1) {
+                event.preventDefault();
+                showWarningModal("This slot is already booked by 1 patient. Add a 2nd appointment?", () => {
+                    window.bypassWarning = true;
+                    document.getElementById('bookingForm').submit();
+                });
+                return false;
+            }
+            return true;
+        }
+
+        function validateEdit(event) {
+            if (window.bypassWarningEdit) {
+                window.bypassWarningEdit = false;
+                return true;
+            }
+
+            const selectedDate = document.getElementById('edit_date').value;
+            const selectedTime = document.getElementById('edit_time').value;
+            
+            const booked = bookedSlotsData[selectedDate] || [];
+            const counts = {};
+            booked.forEach(slot => { counts[slot] = (counts[slot] || 0) + 1; });
+            
+            if (counts[selectedTime] >= 1) {
+                event.preventDefault();
+                showWarningModal("The new slot is already booked. Move this appointment anyway?", () => {
+                    window.bypassWarningEdit = true;
+                    document.getElementById('editForm').submit();
+                });
+                return false;
+            }
+            return true;
+        }
+
+        let warningCallback = null;
+        function showWarningModal(message, callback) {
+            document.getElementById('warningMessage').textContent = message;
+            document.getElementById('warningModal').classList.add('active');
+            warningCallback = callback;
+        }
+
+        function closeWarningModal(confirmed) {
+            document.getElementById('warningModal').classList.remove('active');
+            if (confirmed && warningCallback) {
+                warningCallback();
+            }
+            warningCallback = null;
+        }
 
         // CHARTS
         const isOwner = ("{{ is_owner|lower }}" === "true");
@@ -589,7 +868,7 @@
                 data: {
                     labels: chartLabels,
                     datasets: [
-                        { label: 'New', data: JSON.parse('{{ chart_new_patients_json|safe }}'), backgroundColor: '#667eea', borderRadius: 4 },
+                        { label: 'New', data: JSON.parse('{{ chart_new_patients_json|safe }}'), backgroundColor: '#3E96F4', borderRadius: 4 },
                         { label: 'Return', data: JSON.parse('{{ chart_old_patients_json|safe }}'), backgroundColor: '#a78bfa', borderRadius: 4 }
                     ]
                 },

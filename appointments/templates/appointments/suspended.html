@@ -5,12 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Suspended | Aarogya Medical</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pure-white': '#FFFFFF',
+                        'silver-light': '#EDEEEB',
+                        'heather-gray': '#CCC7BF',
+                        'dark-night': '#31393C',
+                        'electric-blue': '#3E96F4'
+                    }
+                }
+            }
+        }
+    </script>
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #FDFBF7; }
+        body { font-family: 'Outfit', sans-serif; background: #F4F5F2; -webkit-font-smoothing: antialiased; }
         .font-playfair { font-family: 'Playfair Display', serif; }
     </style>
 </head>
@@ -26,12 +43,12 @@
             
             <h1 class="text-3xl font-playfair text-[#2C3E3A] mb-3">Service Suspended</h1>
             
-            <p class="text-gray-500 text-sm leading-relaxed mb-8">
+            <p class="text-heather-gray text-sm leading-relaxed mb-8">
                 Your clinic's access to the Aarogya Medical portal has been temporarily paused. Please contact your system administrator to reactivate your account.
             </p>
             
-            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                <p class="text-xs text-gray-400 uppercase tracking-widest font-medium">Error Code</p>
+            <div class="bg-silver-light rounded-xl p-4 border border-heather-gray/50">
+                <p class="text-xs text-heather-gray uppercase tracking-widest font-medium">Error Code</p>
                 <p class="text-[#2C3E3A] font-mono text-sm mt-1">ERR_SUBSCRIPTION_INACTIVE</p>
             </div>
         </div>
