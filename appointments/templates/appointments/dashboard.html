@@ -13,10 +13,10 @@
                 extend: {
                     colors: {
                         'pure-white': '#FFFFFF',
-                        'silver-light': '#EDEEEB',
-                        'heather-gray': '#CCC7BF',
-                        'dark-night': '#31393C',
-                        'electric-blue': '#3E96F4'
+                        'silver-light': '#F1F5F9', /* Slate 100 */
+                        'heather-gray': '#64748B', /* Slate 500 */
+                        'dark-night': '#0F172A', /* Slate 900 */
+                        'electric-blue': '#6366F1' /* Indigo 500 */
                     }
                 }
             }
@@ -27,198 +27,160 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif;
-            background: #F4F5F2;
-            background-image: radial-gradient(ellipse at 0% 0%, rgba(62,150,244,0.04) 0%, transparent 50%), radial-gradient(ellipse at 100% 100%, rgba(62,150,244,0.03) 0%, transparent 50%);
-            color: #31393C;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
+            background-size: 200% 200%;
+            animation: meshBG 15s ease infinite;
+            color: #0F172A;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
-        .font-playfair { font-family: 'Playfair Display', serif; }
+        @keyframes meshBG {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
 
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CCC7BF; border-radius: 100px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 100px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-        /* Glass nav */
+        /* Floating Nav */
         .glass-strong {
-            background: rgba(255,255,255,0.82);
-            backdrop-filter: blur(24px) saturate(1.8);
-            -webkit-backdrop-filter: blur(24px) saturate(1.8);
-            border-bottom: 1px solid rgba(204,199,191,0.3);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
         }
 
-        /* Card styles */
+        /* Premium Cards */
         .card-hover {
-            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.03);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-hover::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #6366F1, #0EA5E9);
+            opacity: 0; transition: opacity 0.3s ease;
         }
         .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -12px rgba(49,57,60,0.10), 0 0 0 1px rgba(62,150,244,0.08);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.15);
+            background: #ffffff;
         }
-
-        /* Gradient border */
-        .gradient-border { position: relative; }
-        .gradient-border::before {
-            content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
-            background: linear-gradient(135deg, #3E96F4, #6CB5F7);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude;
-            opacity: 0; transition: opacity 0.35s ease;
-        }
-        .gradient-border:hover::before { opacity: 1; }
-
-        /* Expandable row */
-        .expand-row { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; opacity: 0; }
-        .expand-row.open { max-height: 400px; opacity: 1; }
+        .card-hover:hover::before { opacity: 1; }
 
         /* Inputs */
         .input-modern {
-            transition: border-color 0.25s ease, box-shadow 0.25s ease;
-            border: 1.5px solid #E0DDD9;
-            background: #FAFAF8;
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            color: #0F172A;
         }
-        .input-modern:hover { border-color: #CCC7BF; }
         .input-modern:focus {
-            border-color: #3E96F4;
-            box-shadow: 0 0 0 3px rgba(62,150,244,0.12);
+            background: #FFFFFF;
+            border-color: #6366F1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
             outline: none;
-            background: #fff;
+            transform: translateY(-2px);
         }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #6366F1, #0EA5E9);
+            background-size: 200% auto;
+            color: white;
+            border-radius: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+        .btn-primary:active { transform: translateY(0); }
 
         /* Chart container */
-        .chart-container { position: relative; height: 220px; }
+        .chart-container { position: relative; height: 260px; }
 
-        /* Status badge pulse */
-        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
-
-        /* Page entrance */
+        /* Animations */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(30px) scale(0.95); filter: blur(4px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
-        .animate-in { animation: fadeInUp 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
-        .delay-1 { animation-delay: 0.08s; opacity: 0; }
+        .animate-in { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
 
         /* Modal Styles */
         #medicineModal, #editModal, #eventDetailsModal, #warningModal { display: none; }
         #medicineModal.active, #editModal.active, #eventDetailsModal.active, #warningModal.active { display: flex; }
 
-        /* Modal entrance */
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(8px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        #medicineModal.active > div,
-        #editModal.active > div,
-        #eventDetailsModal.active > div,
-        #warningModal.active > div {
-            animation: modalIn 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
-        }
-
-        /* FullCalendar Customization */
-        .fc { 
-            font-family: 'Inter', sans-serif; 
-            font-size: 0.8rem;
-            --fc-button-border-radius: 8px; 
-        }
-        .fc-toolbar-title { font-size: 1.15rem !important; font-weight: 700 !important; color: #31393C; letter-spacing: -0.01em; }
+        /* FullCalendar Premium Skin */
+        .fc { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; }
+        .fc-toolbar-title { font-size: 1.25rem !important; font-weight: 800 !important; color: #0F172A; }
         .fc-button-primary {
-            background-color: #3E96F4 !important; border-color: #3E96F4 !important;
-            font-weight: 600 !important;
-            box-shadow: 0 1px 2px rgba(62,150,244,0.15) !important;
-            transition: all 0.2s ease !important;
-            text-transform: capitalize;
+            background: #6366F1 !important; border: none !important; border-radius: 12px !important;
+            font-weight: 600 !important; transition: all 0.3s ease !important;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2) !important;
         }
-        .fc-button-primary:hover {
-            background-color: #2b82dc !important; border-color: #2b82dc !important;
-            box-shadow: 0 4px 12px rgba(62,150,244,0.25) !important;
-            transform: translateY(-1px);
-        }
-        .fc-button-primary:not(:disabled).fc-button-active {
-            background-color: #1a6fc2 !important; border-color: #1a6fc2 !important;
-        }
-        
-        .fc-button-group > .fc-button-primary { border-radius: 0 !important; }
-        .fc-button-group > .fc-button-primary:first-child { border-top-left-radius: 8px !important; border-bottom-left-radius: 8px !important; border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; }
-        .fc-button-group > .fc-button-primary:last-child { border-top-right-radius: 8px !important; border-bottom-right-radius: 8px !important; border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; }
-        .fc-button-group > .fc-button-primary:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.2) !important; }
+        .fc-button-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3) !important; }
+        .fc-button-primary:not(:disabled).fc-button-active { background: #4F46E5 !important; }
         .fc-event {
-            cursor: pointer; border-radius: 6px !important; padding: 2px 6px;
-            border: none !important; font-weight: 600;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            border-radius: 8px !important; border: none !important; padding: 4px 8px;
+            background: linear-gradient(135deg, #6366F1, #0EA5E9) !important;
+            color: white !important; font-weight: 600;
+            box-shadow: 0 2px 5px rgba(99,102,241,0.2);
+            transition: all 0.2s ease;
         }
-        .fc-event:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); transform: translateY(-1px); }
-        .fc-event-title { font-weight: 600; font-size: 0.72rem; }
-        .fc-col-header-cell { font-weight: 700 !important; color: #31393C !important; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        .fc-timegrid-slot { height: 3em !important; }
-        .fc-timegrid-slot-label { font-size: 0.65rem; font-weight: 600; color: #CCC7BF; }
-        .fc .fc-daygrid-day-number { font-weight: 600; color: #31393C; }
-        .fc .fc-day-today { background: rgba(62,150,244,0.04) !important; }
-        .fc-scrollgrid { border-color: #EDEEEB !important; }
-        .fc td, .fc th { border-color: #EDEEEB !important; }
+        .fc-event:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+        .fc-col-header-cell { font-weight: 700 !important; color: #64748B !important; font-size: 0.75rem; text-transform: uppercase; padding: 12px 0 !important; }
+        .fc-timegrid-slot { height: 3.5em !important; }
+        .fc-scrollgrid, .fc td, .fc th { border-color: #E2E8F0 !important; }
+        .fc .fc-day-today { background: rgba(99, 102, 241, 0.03) !important; }
 
-        /* Flatpickr */
+        /* Flatpickr Premium Skin */
         .flatpickr-calendar {
-            background: #fff;
-            backdrop-filter: blur(12px);
-            border: 1px solid #E0DDD9 !important;
-            border-radius: 16px !important;
-            box-shadow: 0 16px 48px -12px rgba(49,57,60,0.12), 0 0 0 1px rgba(0,0,0,0.03) !important;
-            font-family: 'Inter', sans-serif !important;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 20px !important;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.1) !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
         .flatpickr-day.selected {
-            background: #3E96F4 !important;
-            border-color: transparent !important;
-            border-radius: 10px !important;
-            box-shadow: 0 2px 8px rgba(62,150,244,0.3);
+            background: #6366F1 !important; border-color: transparent !important;
+            border-radius: 12px !important; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
         }
-        .flatpickr-day:hover {
-            background: rgba(62,150,244,0.08) !important;
-            border-radius: 10px !important;
-        }
-        .flatpickr-months .flatpickr-month {
-            background: transparent !important;
-            color: #31393C !important;
-            height: 44px !important;
-        }
-        .flatpickr-current-month .flatpickr-monthDropdown-months {
-            font-weight: 700 !important;
-        }
-        .flatpickr-weekday {
-            color: #CCC7BF !important;
-            font-weight: 700 !important;
-            font-size: 0.7rem !important;
-        }
-
-        /* Button primary shared */
-        .btn-primary {
-            background: #3E96F4;
-            color: #fff;
-            font-weight: 700;
-            transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-primary:hover {
-            background: #2b82dc;
-            box-shadow: 0 8px 24px -4px rgba(62,150,244,0.3);
-            transform: translateY(-1px);
-        }
-        .btn-primary:active { transform: translateY(0); }
     </style>
 </head>
 <body class="pb-24 selection:bg-electric-blue selection:text-white">
@@ -280,43 +242,43 @@
 
         <!-- STAT CARDS -->
         <h2 class="text-[11px] font-extrabold tracking-[0.2em] text-heather-gray uppercase mb-5 animate-in">Today's Pulse</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-heather-gray/30 card-hover gradient-border animate-in delay-1">
-                <div class="w-9 h-9 sm:w-11 sm:h-11 bg-silver-light rounded-xl sm:rounded-2xl flex items-center justify-center text-blue-500 mb-3 sm:mb-4"><i data-lucide="calendar-check" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-dark-night mb-0.5">{{ total_today }}</h3>
-                <p class="text-[10px] sm:text-xs text-heather-gray font-semibold tracking-wide">Appointments</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
+            <div class="card-hover p-5 sm:p-6 animate-in delay-1">
+                <div class="w-12 h-12 bg-blue-100/50 rounded-2xl flex items-center justify-center text-blue-600 mb-4 shadow-sm"><i data-lucide="calendar-check" class="w-6 h-6"></i></div>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-dark-night mb-1">{{ total_today }}</h3>
+                <p class="text-xs text-heather-gray font-bold tracking-wide uppercase">Appointments</p>
             </div>
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-heather-gray/30 card-hover gradient-border animate-in delay-1">
-                <div class="w-9 h-9 sm:w-11 sm:h-11 bg-violet-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-violet-500 mb-3 sm:mb-4"><i data-lucide="user-plus" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-dark-night mb-0.5">{{ new_patients }}</h3>
-                <p class="text-[10px] sm:text-xs text-heather-gray font-semibold tracking-wide">New Patients</p>
+            <div class="card-hover p-5 sm:p-6 animate-in delay-2">
+                <div class="w-12 h-12 bg-violet-100/50 rounded-2xl flex items-center justify-center text-violet-600 mb-4 shadow-sm"><i data-lucide="user-plus" class="w-6 h-6"></i></div>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-dark-night mb-1">{{ new_patients }}</h3>
+                <p class="text-xs text-heather-gray font-bold tracking-wide uppercase">New Patients</p>
             </div>
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-heather-gray/30 card-hover gradient-border animate-in delay-1">
-                <div class="w-9 h-9 sm:w-11 sm:h-11 bg-amber-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-amber-500 mb-3 sm:mb-4"><i data-lucide="users" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-dark-night mb-0.5">{{ old_patients }}</h3>
-                <p class="text-[10px] sm:text-xs text-heather-gray font-semibold tracking-wide">Returning</p>
+            <div class="card-hover p-5 sm:p-6 animate-in delay-3">
+                <div class="w-12 h-12 bg-amber-100/50 rounded-2xl flex items-center justify-center text-amber-600 mb-4 shadow-sm"><i data-lucide="users" class="w-6 h-6"></i></div>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-dark-night mb-1">{{ old_patients }}</h3>
+                <p class="text-xs text-heather-gray font-bold tracking-wide uppercase">Returning</p>
             </div>
-            <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-heather-gray/30 card-hover gradient-border animate-in delay-1">
-                <div class="w-9 h-9 sm:w-11 sm:h-11 bg-teal-50 rounded-xl sm:rounded-2xl flex items-center justify-center text-teal-500 mb-3 sm:mb-4"><i data-lucide="heart" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-dark-night mb-0.5">{{ total_patients_all }}</h3>
-                <p class="text-[10px] sm:text-xs text-heather-gray font-semibold tracking-wide">Total Patients</p>
+            <div class="card-hover p-5 sm:p-6 animate-in delay-4">
+                <div class="w-12 h-12 bg-teal-100/50 rounded-2xl flex items-center justify-center text-teal-600 mb-4 shadow-sm"><i data-lucide="heart" class="w-6 h-6"></i></div>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-dark-night mb-1">{{ total_patients_all }}</h3>
+                <p class="text-xs text-heather-gray font-bold tracking-wide uppercase">Total Patients</p>
             </div>
             {% if is_owner %}
-            <div class="bg-gradient-to-br from-[#3E96F4] to-[#2b82dc] rounded-3xl p-4 sm:p-5 shadow-lg shadow-[#3E96F4]/15 card-hover animate-in delay-1">
-                <div class="w-9 h-9 sm:w-11 sm:h-11 bg-white/15 backdrop-blur-md rounded-xl sm:rounded-2xl flex items-center justify-center text-white mb-3 sm:mb-4"><i data-lucide="indian-rupee" class="w-4 h-4 sm:w-5 sm:h-5"></i></div>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-white mb-0.5">₹{{ revenue_today }}</h3>
-                <p class="text-[10px] sm:text-xs text-white/60 font-semibold tracking-wide">Today's Revenue</p>
+            <div class="p-5 sm:p-6 animate-in delay-5 bg-gradient-to-br from-[#6366F1] to-[#0EA5E9] rounded-3xl border-none text-white shadow-[0_10px_30px_rgba(99,102,241,0.3)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(99,102,241,0.4)] relative overflow-hidden">
+                <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white mb-4 shadow-sm"><i data-lucide="indian-rupee" class="w-6 h-6"></i></div>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-white mb-1">₹{{ revenue_today }}</h3>
+                <p class="text-xs text-white/80 font-bold tracking-wide uppercase">Today's Revenue</p>
             </div>
             {% endif %}
         </div>
 
 
           <!-- MAIN CONTENT (FORM + SCHEDULE) -->
-        <div class="flex flex-col xl:grid xl:grid-cols-12 gap-8 animate-in delay-1">
+        <div class="flex flex-col xl:grid xl:grid-cols-12 gap-8 animate-in delay-2">
             
             <!-- BOOKING FORM -->
             <div class="xl:col-span-4">
-                <div class="bg-white p-5 sm:p-7 rounded-[1.5rem] shadow-[0_1px_3px_rgba(0,0,0,0.06)] border border-[#E8E6E3] sticky top-24">
+                <div class="card-hover p-6 sm:p-8 sticky top-24">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-11 h-11 bg-electric-blue/10 rounded-2xl flex items-center justify-center text-electric-blue"><i data-lucide="calendar-plus" class="w-5 h-5"></i></div>
                         <div>
@@ -359,14 +321,15 @@
                             <div>
                                 <label class="block text-xs font-bold text-dark-night mb-1.5">Time</label>
                                 <select name="time_slot" id="booking_time" class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium">
-                                    <option value="09:00 AM">09:00 AM</option><option value="09:30 AM">09:30 AM</option>
-                                    <option value="10:00 AM">10:00 AM</option><option value="10:30 AM">10:30 AM</option>
-                                    <option value="11:00 AM">11:00 AM</option><option value="11:30 AM">11:30 AM</option>
-                                    <option value="12:00 PM">12:00 PM</option><option value="12:30 PM">12:30 PM</option>
-                                    <option value="02:00 PM">02:00 PM</option><option value="02:30 PM">02:30 PM</option>
-                                    <option value="03:00 PM">03:00 PM</option><option value="03:30 PM">03:30 PM</option>
-                                    <option value="04:00 PM">04:00 PM</option><option value="04:30 PM">04:30 PM</option>
-                                    <option value="05:00 PM">05:00 PM</option><option value="05:30 PM">05:30 PM</option>
+                                    <option value="09:00 AM">09:00 AM</option><option value="09:15 AM">09:15 AM</option><option value="09:30 AM">09:30 AM</option><option value="09:45 AM">09:45 AM</option>
+                                    <option value="10:00 AM">10:00 AM</option><option value="10:15 AM">10:15 AM</option><option value="10:30 AM">10:30 AM</option><option value="10:45 AM">10:45 AM</option>
+                                    <option value="11:00 AM">11:00 AM</option><option value="11:15 AM">11:15 AM</option><option value="11:30 AM">11:30 AM</option><option value="11:45 AM">11:45 AM</option>
+                                    <option value="12:00 PM">12:00 PM</option><option value="12:15 PM">12:15 PM</option><option value="12:30 PM">12:30 PM</option><option value="12:45 PM">12:45 PM</option>
+                                    <option value="01:00 PM">01:00 PM</option><option value="01:15 PM">01:15 PM</option><option value="01:30 PM">01:30 PM</option><option value="01:45 PM">01:45 PM</option>
+                                    <option value="02:00 PM">02:00 PM</option><option value="02:15 PM">02:15 PM</option><option value="02:30 PM">02:30 PM</option><option value="02:45 PM">02:45 PM</option>
+                                    <option value="03:00 PM">03:00 PM</option><option value="03:15 PM">03:15 PM</option><option value="03:30 PM">03:30 PM</option><option value="03:45 PM">03:45 PM</option>
+                                    <option value="04:00 PM">04:00 PM</option><option value="04:15 PM">04:15 PM</option><option value="04:30 PM">04:30 PM</option><option value="04:45 PM">04:45 PM</option>
+                                    <option value="05:00 PM">05:00 PM</option><option value="05:15 PM">05:15 PM</option><option value="05:30 PM">05:30 PM</option><option value="05:45 PM">05:45 PM</option>
                                 </select>
                             </div>
                         </div>
@@ -383,7 +346,7 @@
 
             <!-- APPOINTMENT SCHEDULE -->
             <div class="xl:col-span-8 flex flex-col h-full">
-                <div class="bg-white rounded-[1.5rem] shadow-[0_1px_3px_rgba(0,0,0,0.06)] border border-[#E8E6E3] overflow-hidden flex flex-col h-full">
+                <div class="card-hover overflow-hidden flex flex-col h-full">
                     <div class="p-5 sm:p-6 border-b border-[#EDEEEB]">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                             <h2 class="text-xl font-bold text-dark-night">Appointment Schedule</h2>
@@ -415,7 +378,7 @@
         
         <!-- CHARTS SECTION -->
         {% if is_owner %}
-        <div class="mb-10 animate-in delay-1">
+        <div class="mb-10 animate-in delay-3">
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
                     <h2 class="text-[11px] font-extrabold tracking-[0.2em] text-electric-blue uppercase">Analytics Overview</h2>
@@ -441,13 +404,13 @@
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Patient Chart -->
-                <div class="bg-white rounded-[1.4rem] p-6 shadow-sm border border-heather-gray/30">
-                    <h3 class="text-base font-bold text-dark-night mb-4">Patient Visits</h3>
+                <div class="card-hover p-6 sm:p-8">
+                    <h3 class="text-lg font-bold text-dark-night mb-6">Patient Visits</h3>
                     <div class="chart-container"><canvas id="patientChart"></canvas></div>
                 </div>
                 <!-- Revenue Chart -->
-                <div class="bg-white rounded-[1.4rem] p-6 shadow-sm border border-heather-gray/30">
-                    <h3 class="text-base font-bold text-dark-night mb-4">Revenue Trend</h3>
+                <div class="card-hover p-6 sm:p-8">
+                    <h3 class="text-lg font-bold text-dark-night mb-6">Revenue Trend</h3>
                     <div class="chart-container"><canvas id="revenueChart"></canvas></div>
                 </div>
             </div>
@@ -457,7 +420,7 @@
       
 
         <!-- RECENT PATIENT HISTORIES (NEW SECTION) -->
-        <div class="mt-8 bg-white p-7 rounded-[1.5rem] shadow-[0_1px_3px_rgba(0,0,0,0.06)] border border-[#E8E6E3] animate-in delay-1">
+        <div class="card-hover mt-8 p-6 sm:p-8 animate-in delay-4">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-silver-light rounded-xl flex items-center justify-center text-electric-blue">
@@ -497,8 +460,8 @@
     </div>
 
     <!-- MEDICINE MODAL -->
-    <div id="medicineModal" class="fixed inset-0 bg-dark-night/50 backdrop-blur-sm z-[100] items-center justify-center hidden">
-        <div class="bg-white rounded-2xl shadow-[0_24px_48px_-12px_rgba(0,0,0,0.15)] p-6 max-w-md w-full mx-4 border border-[#E8E6E3]">
+    <div id="medicineModal" class="fixed inset-0 bg-dark-night/60 backdrop-blur-sm z-[100] items-center justify-center hidden">
+        <div class="bg-white rounded-[2rem] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.25)] p-8 max-w-md w-full mx-4 border border-[#E2E8F0]">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold text-dark-night">Complete Appointment</h3>
                 <button type="button" onclick="closeModal()" class="text-heather-gray hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -556,14 +519,15 @@
                 <div class="mb-6">
                     <label class="block text-xs font-bold text-dark-night mb-1.5">New Time</label>
                     <select name="new_time" id="edit_time" required class="w-full px-4 py-2.5 rounded-xl input-modern bg-silver-light/50 text-sm font-medium">
-                        <option value="09:00 AM">09:00 AM</option><option value="09:30 AM">09:30 AM</option>
-                        <option value="10:00 AM">10:00 AM</option><option value="10:30 AM">10:30 AM</option>
-                        <option value="11:00 AM">11:00 AM</option><option value="11:30 AM">11:30 AM</option>
-                        <option value="12:00 PM">12:00 PM</option><option value="12:30 PM">12:30 PM</option>
-                        <option value="02:00 PM">02:00 PM</option><option value="02:30 PM">02:30 PM</option>
-                        <option value="03:00 PM">03:00 PM</option><option value="03:30 PM">03:30 PM</option>
-                        <option value="04:00 PM">04:00 PM</option><option value="04:30 PM">04:30 PM</option>
-                        <option value="05:00 PM">05:00 PM</option><option value="05:30 PM">05:30 PM</option>
+                        <option value="09:00 AM">09:00 AM</option><option value="09:15 AM">09:15 AM</option><option value="09:30 AM">09:30 AM</option><option value="09:45 AM">09:45 AM</option>
+                        <option value="10:00 AM">10:00 AM</option><option value="10:15 AM">10:15 AM</option><option value="10:30 AM">10:30 AM</option><option value="10:45 AM">10:45 AM</option>
+                        <option value="11:00 AM">11:00 AM</option><option value="11:15 AM">11:15 AM</option><option value="11:30 AM">11:30 AM</option><option value="11:45 AM">11:45 AM</option>
+                        <option value="12:00 PM">12:00 PM</option><option value="12:15 PM">12:15 PM</option><option value="12:30 PM">12:30 PM</option><option value="12:45 PM">12:45 PM</option>
+                        <option value="01:00 PM">01:00 PM</option><option value="01:15 PM">01:15 PM</option><option value="01:30 PM">01:30 PM</option><option value="01:45 PM">01:45 PM</option>
+                        <option value="02:00 PM">02:00 PM</option><option value="02:15 PM">02:15 PM</option><option value="02:30 PM">02:30 PM</option><option value="02:45 PM">02:45 PM</option>
+                        <option value="03:00 PM">03:00 PM</option><option value="03:15 PM">03:15 PM</option><option value="03:30 PM">03:30 PM</option><option value="03:45 PM">03:45 PM</option>
+                        <option value="04:00 PM">04:00 PM</option><option value="04:15 PM">04:15 PM</option><option value="04:30 PM">04:30 PM</option><option value="04:45 PM">04:45 PM</option>
+                        <option value="05:00 PM">05:00 PM</option><option value="05:15 PM">05:15 PM</option><option value="05:30 PM">05:30 PM</option><option value="05:45 PM">05:45 PM</option>
                     </select>
                 </div>
                 
@@ -718,6 +682,7 @@
                 events: calendarEvents,
                 slotMinTime: '08:00:00',
                 slotMaxTime: '19:00:00',
+                slotDuration: '00:15:00',
                 allDaySlot: false,
                 slotEventOverlap: false,
                 dayMaxEvents: true,
